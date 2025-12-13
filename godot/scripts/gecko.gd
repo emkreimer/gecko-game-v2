@@ -5,6 +5,7 @@ signal gecko_selected(gecko: GeckoEntity)
 signal gecko_hovered(gecko: GeckoEntity, info_text: String)
 
 @export var animation_speed := 0.25
+@export var base_scale := Vector2(0.18, 0.18)
 
 var gecko_name := "Unnamed"
 var generation := 1
@@ -33,6 +34,8 @@ func _ready() -> void:
 	click_area.mouse_exited.connect(_on_mouse_exited)
 	animation_timer.start()
 	_update_name_label()
+	if not genes.is_empty():
+		_update_from_genes()
 
 func initialize(p_genes: Dictionary, p_name: String, p_generation: int, p_parents: PackedStringArray = []) -> void:
 	gecko_name = p_name
@@ -90,8 +93,9 @@ func _update_from_genes() -> void:
 	var size_data: Dictionary = summary.get("size", {}).get("data", {})
 	var tail_data: Dictionary = summary.get("tail", {}).get("data", {})
 
-	if not color_data.is_empty():
-		body_sprite.modulate = color_data.get("color", Color.WHITE)
+	var body_color: Color = color_data.get("color", Color.WHITE)
+	body_sprite.modulate = body_color
+	tail_sprite.modulate = body_color
 	if not eye_data.is_empty():
 		eye_sprite.modulate = eye_data.get("color", Color.WHITE)
 
@@ -99,8 +103,9 @@ func _update_from_genes() -> void:
 
 	var size_scale: float = size_data.get("scale", 1.0)
 	var tail_scale: float = tail_data.get("scale", 1.0)
-	composite.scale = Vector2(size_scale, size_scale)
-	tail_sprite.scale = Vector2(tail_scale, tail_scale)
+	var final_scale := Vector2(size_scale, size_scale) * base_scale
+	composite.scale = final_scale
+	tail_sprite.scale = Vector2(1.0, tail_scale)
 
 func _update_name_label() -> void:
 	if name_label:

@@ -65,3 +65,6 @@ func get_dialogue(topic: String) -> Array:
 			return PUNNETT_SQUARE_EXPLANATION.duplicate(true)
 		_:
 			return []
+
+func get_active_topic() -> String:
+	return _active_topic

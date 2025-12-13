@@ -50,8 +50,8 @@ autostart = true
 [node name="ClickArea" type="Area2D" parent="."]
 unique_name_in_owner = true
 input_pickable = true
-collision_layer = 0
-collision_mask = 0
+collision_layer = 1
+collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
 shape = SubResource("RectangleShape2D_w66pg")

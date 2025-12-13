@@ -5,6 +5,10 @@ const STARTER_COUNT := 2
 const DEFAULT_INFO_TEXT := "Select two geckos to breed. Finish dialogue prompts to continue."
 const DIALOGUE_INFO_TEXT := "Please finish reading the dialogue first!"
 const TERRARIUM_FULL_TEXT := "Terrarium is full. Release or remove a gecko before breeding again."
+const SPAWN_MARGIN := Vector2(64, 64)
+const MIN_GECKO_DISTANCE := 120.0
+const MAX_SPAWN_ATTEMPTS := 20
+const LOG_PREFIX := "[IngameController]"
 
 @onready var gecko_container := %GeckoContainer
 @onready var dialogue_box: DialogueBox = %DialogueBox
@@ -42,31 +46,70 @@ func _spawn_starter_geckos() -> void:
 
 func _spawn_gecko(genes: Dictionary, name: String, generation: int, parents: PackedStringArray = []) -> GeckoEntity:
 	if gecko_container.get_child_count() >= MAX_GECKOS:
+		print(LOG_PREFIX, " spawn blocked: max geckos reached")
 		return null
 	var gecko: GeckoEntity = _gecko_scene.instantiate()
-	gecko.position = Vector2(randf_range(200, 1720), randf_range(300, 860))
+	gecko.position = _get_spawn_position()
 	gecko.initialize(genes, name, generation, parents)
 	_attach_gecko_signals(gecko)
 	gecko_container.add_child(gecko)
+	print(LOG_PREFIX, " spawned gecko", gecko.gecko_name, "at", gecko.position)
 	return gecko
+
+func _get_spawn_position() -> Vector2:
+	var viewport_size := get_viewport_rect().size
+	if viewport_size == Vector2.ZERO:
+		viewport_size = get_viewport().get_visible_rect().size
+	var min_bound := Vector2(
+		min(SPAWN_MARGIN.x, viewport_size.x),
+		min(SPAWN_MARGIN.y, viewport_size.y)
+	)
+	var max_bound := Vector2(
+		max(viewport_size.x - SPAWN_MARGIN.x, min_bound.x),
+		max(viewport_size.y - SPAWN_MARGIN.y, min_bound.y)
+	)
+	var fallback := (min_bound + max_bound) * 0.5
+	for _i in range(MAX_SPAWN_ATTEMPTS):
+		var candidate := Vector2(
+			randf_range(min_bound.x, max_bound.x),
+			randf_range(min_bound.y, max_bound.y)
+		)
+		if _is_spawn_position_valid(candidate):
+			return candidate
+	return fallback
+
+func _is_spawn_position_valid(position: Vector2) -> bool:
+	for child in gecko_container.get_children():
+		if child is GeckoEntity and child.position.distance_to(position) < MIN_GECKO_DISTANCE:
+			return false
+	return true
 
 func _on_gecko_selected(gecko: GeckoEntity) -> void:
 	if _dialogue_system.is_active():
-		return
+		var active_topic := _dialogue_system.get_active_topic()
+		if active_topic != "breeding":
+			print(LOG_PREFIX, " selection ignored due to dialogue", active_topic)
+			return
+	print(LOG_PREFIX, " gecko clicked", gecko.gecko_name)
 	if gecko in _selected:
 		_selected.erase(gecko)
 		gecko.set_selected(false)
+		print(LOG_PREFIX, " deselected", gecko.gecko_name, "remaining", _selected.size())
 		return
 	if _selected.size() >= 2:
 		for entry in _selected:
 			entry.set_selected(false)
 		_selected.clear()
+		print(LOG_PREFIX, " selection reset - too many geckos")
 	_selected.append(gecko)
 	gecko.set_selected(true)
+	print(LOG_PREFIX, " selected", gecko.gecko_name, "total selected", _selected.size())
 	if _selected.size() == 1 and not _breeding_hint_shown:
 		_breeding_hint_shown = true
+		print(LOG_PREFIX, " starting breeding dialogue")
 		_dialogue_system.start_dialogue(_dialogue_system.get_dialogue("breeding"), "breeding")
 	if _selected.size() == 2:
+		print(LOG_PREFIX, " second selection complete, starting punnett dialogue")
 		_dialogue_system.start_dialogue(_dialogue_system.get_dialogue("punnett"), "punnett")
 
 func _on_dialogue_line(line: Dictionary) -> void:
@@ -88,6 +131,7 @@ func _advance_dialogue() -> void:
 
 func _hatch_selected_gecko() -> void:
 	if _selected.size() < 2:
+		print(LOG_PREFIX, " hatch aborted - need two selected geckos")
 		return
 	var parent_a: GeckoEntity = _selected[0]
 	var parent_b: GeckoEntity = _selected[1]
@@ -95,11 +139,13 @@ func _hatch_selected_gecko() -> void:
 	var parents := PackedStringArray([parent_a.gecko_name, parent_b.gecko_name])
 	var child := _spawn_gecko(genes, "Hatchling %d" % randi(), max(parent_a.generation, parent_b.generation) + 1, parents)
 	if child:
+		print(LOG_PREFIX, " hatched child", child.gecko_name, "gen", child.generation)
 		_selected.clear()
 		parent_a.set_selected(false)
 		parent_b.set_selected(false)
 		_set_info_text()
 		return
+	print(LOG_PREFIX, " hatch failed - terrarium full")
 	for entry in _selected:
 		entry.set_selected(false)
 	_selected.clear()
