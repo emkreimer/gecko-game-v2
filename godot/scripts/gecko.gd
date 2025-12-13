@@ -7,6 +7,14 @@ signal gecko_hovered(gecko: GeckoEntity, info_text: String)
 @export var animation_speed := 0.25
 @export var base_scale := Vector2(0.18, 0.18)
 
+# Per-frame offsets to correct the right-shifted 4th sprite in the sheets.
+const FRAME_OFFSETS: Array[Vector2] = [
+	Vector2.ZERO,
+	Vector2.ZERO,
+	Vector2.ZERO,
+	Vector2(-64, 0)
+]
+
 var gecko_name := "Unnamed"
 var generation := 1
 var genes: Dictionary = {}
@@ -117,6 +125,14 @@ func _on_animation_timer_timeout() -> void:
 	eye_sprite.frame = _frame
 	tail_sprite.frame = _frame
 	spots_sprite.frame = _frame
+	_apply_frame_offset()
+
+func _apply_frame_offset() -> void:
+	var offset: Vector2 = FRAME_OFFSETS[_frame]
+	body_sprite.offset = offset
+	eye_sprite.offset = offset
+	tail_sprite.offset = offset
+	spots_sprite.offset = offset
 
 func _on_click_area_input_event(_viewport, event, _shape_idx) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

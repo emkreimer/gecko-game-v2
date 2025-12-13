@@ -14,6 +14,7 @@ const LOG_PREFIX := "[IngameController]"
 @onready var dialogue_box: DialogueBox = %DialogueBox
 @onready var pause_overlay := %PauseOverlay
 @onready var fade_overlay := %FadeOverlay
+@onready var punnett_overlay := %PunnettOverlay
 @onready var info_label := %InfoLabel
 
 var _dialogue_system := DialogueSystem.new()
@@ -95,11 +96,14 @@ func _on_gecko_selected(gecko: GeckoEntity) -> void:
 		_selected.erase(gecko)
 		gecko.set_selected(false)
 		print(LOG_PREFIX, " deselected", gecko.gecko_name, "remaining", _selected.size())
+		#if _selected.size() < 2:
+			#punnett_overlay.hide_overlay()
 		return
 	if _selected.size() >= 2:
 		for entry in _selected:
 			entry.set_selected(false)
 		_selected.clear()
+		#punnett_overlay.hide_overlay()
 		print(LOG_PREFIX, " selection reset - too many geckos")
 	_selected.append(gecko)
 	gecko.set_selected(true)
@@ -110,6 +114,7 @@ func _on_gecko_selected(gecko: GeckoEntity) -> void:
 		_dialogue_system.start_dialogue(_dialogue_system.get_dialogue("breeding"), "breeding")
 	if _selected.size() == 2:
 		print(LOG_PREFIX, " second selection complete, starting punnett dialogue")
+		_show_punnett_square(_selected[0], _selected[1])
 		_dialogue_system.start_dialogue(_dialogue_system.get_dialogue("punnett"), "punnett")
 
 func _on_dialogue_line(line: Dictionary) -> void:
@@ -122,6 +127,7 @@ func _on_dialogue_started(_topic: String) -> void:
 func _on_dialogue_ended(topic: String) -> void:
 	dialogue_box.hide_dialogue()
 	if topic == "punnett":
+		#punnett_overlay.hide_overlay()
 		_hatch_selected_gecko()
 	else:
 		_set_info_text()
@@ -144,12 +150,22 @@ func _hatch_selected_gecko() -> void:
 		parent_a.set_selected(false)
 		parent_b.set_selected(false)
 		_set_info_text()
+		#punnett_overlay.hide_overlay()
 		return
 	print(LOG_PREFIX, " hatch failed - terrarium full")
 	for entry in _selected:
 		entry.set_selected(false)
 	_selected.clear()
+	#punnett_overlay.hide_overlay()
 	_set_info_text(TERRARIUM_FULL_TEXT)
+
+func _show_punnett_square(parent_a: GeckoEntity, parent_b: GeckoEntity) -> void:
+	var data := GeneticsSystem.build_punnett_data(parent_a.genes, parent_b.genes)
+	print(LOG_PREFIX, " punnett data entries", data.size())
+	if data.is_empty():
+		punnett_overlay.hide_overlay()
+		return
+	punnett_overlay.show_punnett(data)
 
 func _on_gecko_hovered(_gecko: GeckoEntity, info: String) -> void:
 	_set_info_text(info if not info.is_empty() else DEFAULT_INFO_TEXT)

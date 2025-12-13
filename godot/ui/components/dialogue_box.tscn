@@ -43,6 +43,7 @@ scroll_following = true
 text = "Dialogue goes here"
 theme_override_colors/default_color = Color(0.96, 0.98, 1, 1)
 
+
 [node name="ContinueLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2

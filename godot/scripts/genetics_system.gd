@@ -126,3 +126,27 @@ static func clamp_trait_order(genes: Dictionary) -> Array:
 		if gene:
 			ordered.append(gene)
 	return ordered
+
+static func build_punnett_data(parent_a_genes: Dictionary, parent_b_genes: Dictionary) -> Array:
+	var entries: Array = []
+	for trait_key in TRAITS.keys():
+		var gene_a: Gene = parent_a_genes.get(trait_key)
+		var gene_b: Gene = parent_b_genes.get(trait_key)
+		if gene_a == null or gene_b == null:
+			continue
+		var alleles_a: PackedStringArray = gene_a.get_alleles()
+		var alleles_b: PackedStringArray = gene_b.get_alleles()
+		var grid: Array = []
+		for allele_a in alleles_a:
+			var row: Array = []
+			for allele_b in alleles_b:
+				row.append(String(allele_a) + String(allele_b))
+			grid.append(row)
+		entries.append({
+			"trait_key": trait_key,
+			"trait_name": gene_a.gene_name,
+			"parent_a": alleles_a.duplicate(),
+			"parent_b": alleles_b.duplicate(),
+			"grid": grid
+		})
+	return entries
