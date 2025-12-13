@@ -1,0 +1,126 @@
+class_name GeckoEntity
+extends Node2D
+
+signal gecko_selected(gecko: GeckoEntity)
+signal gecko_hovered(gecko: GeckoEntity, info_text: String)
+
+@export var animation_speed := 0.25
+
+var gecko_name := "Unnamed"
+var generation := 1
+var genes: Dictionary = {}
+var parents: PackedStringArray = []
+
+var _selected := false
+var _frame := 0
+var _info_cache := ""
+
+@onready var composite := %CompositeSprite
+@onready var body_sprite := %Body
+@onready var eye_sprite := %Eyes
+@onready var tail_sprite := %Tail
+@onready var spots_sprite := %Spots
+@onready var name_label := %NameLabel
+@onready var animation_timer := %AnimationTimer
+@onready var click_area := %ClickArea
+
+func _ready() -> void:
+	add_to_group("Persist")
+	animation_timer.wait_time = animation_speed
+	animation_timer.timeout.connect(_on_animation_timer_timeout)
+	click_area.input_event.connect(_on_click_area_input_event)
+	click_area.mouse_entered.connect(_on_mouse_entered)
+	click_area.mouse_exited.connect(_on_mouse_exited)
+	animation_timer.start()
+	_update_name_label()
+
+func initialize(p_genes: Dictionary, p_name: String, p_generation: int, p_parents: PackedStringArray = []) -> void:
+	gecko_name = p_name
+	generation = p_generation
+	parents = p_parents.duplicate()
+	genes = {}
+	for trait_key in p_genes.keys():
+		var gene: Gene = p_genes[trait_key]
+		genes[trait_key] = Gene.new()
+		genes[trait_key].configure(gene.trait_key, gene.trait_data, gene.allele1, gene.allele2)
+	_update_from_genes()
+
+func set_selected(selected: bool) -> void:
+	_selected = selected
+	composite.modulate = Color(1.3, 1.3, 0.95, 1) if selected else Color(1, 1, 1, 1)
+
+func toggle_selection() -> void:
+	set_selected(not _selected)
+
+func is_selected() -> bool:
+	return _selected
+
+func get_info_text() -> String:
+	if _info_cache.is_empty():
+		_info_cache = GeneticsSystem.build_info_text(genes)
+	return _info_cache
+
+func save_data() -> Dictionary:
+	return {
+		"name": gecko_name,
+		"generation": generation,
+		"parents": parents,
+		"genes": GeneticsSystem.serialize_genes(genes)
+	}
+
+func load_data(data: Dictionary) -> void:
+	gecko_name = data.get("name", gecko_name)
+	generation = data.get("generation", generation)
+	parents = data.get("parents", [])
+	genes = GeneticsSystem.deserialize_genes(data.get("genes", []))
+	_update_from_genes()
+
+func _update_from_genes() -> void:
+	_info_cache = ""
+	_update_name_label()
+	
+	# Wait until nodes are ready before updating visuals
+	if not body_sprite:
+		return
+	
+	var summary: Dictionary = GeneticsSystem.get_phenotype_summary(genes)
+	var color_data: Dictionary = summary.get("color", {}).get("data", {})
+	var eye_data: Dictionary = summary.get("eye_color", {}).get("data", {})
+	var pattern_data: Dictionary = summary.get("pattern", {}).get("data", {})
+	var size_data: Dictionary = summary.get("size", {}).get("data", {})
+	var tail_data: Dictionary = summary.get("tail", {}).get("data", {})
+
+	if not color_data.is_empty():
+		body_sprite.modulate = color_data.get("color", Color.WHITE)
+	if not eye_data.is_empty():
+		eye_sprite.modulate = eye_data.get("color", Color.WHITE)
+
+	spots_sprite.visible = pattern_data.get("spots_visible", true)
+
+	var size_scale: float = size_data.get("scale", 1.0)
+	var tail_scale: float = tail_data.get("scale", 1.0)
+	composite.scale = Vector2(size_scale, size_scale)
+	tail_sprite.scale = Vector2(tail_scale, tail_scale)
+
+func _update_name_label() -> void:
+	if name_label:
+		name_label.text = "%s (Gen %d)" % [gecko_name, generation]
+
+func _on_animation_timer_timeout() -> void:
+	_frame = (_frame + 1) % 4
+	body_sprite.frame = _frame
+	eye_sprite.frame = _frame
+	tail_sprite.frame = _frame
+	spots_sprite.frame = _frame
+
+func _on_click_area_input_event(_viewport, event, _shape_idx) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		gecko_selected.emit(self)
+	if event.is_action_pressed("ui_accept"):
+		gecko_selected.emit(self)
+
+func _on_mouse_entered() -> void:
+	gecko_hovered.emit(self, get_info_text())
+
+func _on_mouse_exited() -> void:
+	gecko_hovered.emit(self, "")

@@ -1,0 +1,138 @@
+extends Node2D
+
+const MAX_GECKOS := 8
+const STARTER_COUNT := 2
+const DEFAULT_INFO_TEXT := "Select two geckos to breed. Finish dialogue prompts to continue."
+const DIALOGUE_INFO_TEXT := "Please finish reading the dialogue first!"
+const TERRARIUM_FULL_TEXT := "Terrarium is full. Release or remove a gecko before breeding again."
+
+@onready var gecko_container := %GeckoContainer
+@onready var dialogue_box: DialogueBox = %DialogueBox
+@onready var pause_overlay := %PauseOverlay
+@onready var fade_overlay := %FadeOverlay
+@onready var info_label := %InfoLabel
+
+var _dialogue_system := DialogueSystem.new()
+var _selected: Array = []
+var _gecko_scene := preload("res://scenes/gecko.tscn")
+var _breeding_hint_shown := false
+
+func _ready() -> void:
+	randomize()
+	add_child(_dialogue_system)
+	_dialogue_system.dialogue_line_displayed.connect(_on_dialogue_line)
+	_dialogue_system.dialogue_started.connect(_on_dialogue_started)
+	_dialogue_system.dialogue_ended.connect(_on_dialogue_ended)
+	dialogue_box.advance_requested.connect(_advance_dialogue)
+	pause_overlay.game_exited.connect(_save_game)
+	fade_overlay.visible = true
+	if SaveGame.has_save():
+		SaveGame.load_game(get_tree())
+		_wire_existing_geckos()
+		if gecko_container.get_child_count() == 0:
+			_spawn_starter_geckos()
+	else:
+		_spawn_starter_geckos()
+	_set_info_text()
+	_dialogue_system.start_dialogue(_dialogue_system.get_dialogue("intro"), "intro")
+
+func _spawn_starter_geckos() -> void:
+	for i in range(STARTER_COUNT):
+		_spawn_gecko(GeneticsSystem.create_random_genes(), "Starter %d" % (i + 1), 1)
+
+func _spawn_gecko(genes: Dictionary, name: String, generation: int, parents: PackedStringArray = []) -> GeckoEntity:
+	if gecko_container.get_child_count() >= MAX_GECKOS:
+		return null
+	var gecko: GeckoEntity = _gecko_scene.instantiate()
+	gecko.position = Vector2(randf_range(200, 1720), randf_range(300, 860))
+	gecko.initialize(genes, name, generation, parents)
+	_attach_gecko_signals(gecko)
+	gecko_container.add_child(gecko)
+	return gecko
+
+func _on_gecko_selected(gecko: GeckoEntity) -> void:
+	if _dialogue_system.is_active():
+		return
+	if gecko in _selected:
+		_selected.erase(gecko)
+		gecko.set_selected(false)
+		return
+	if _selected.size() >= 2:
+		for entry in _selected:
+			entry.set_selected(false)
+		_selected.clear()
+	_selected.append(gecko)
+	gecko.set_selected(true)
+	if _selected.size() == 1 and not _breeding_hint_shown:
+		_breeding_hint_shown = true
+		_dialogue_system.start_dialogue(_dialogue_system.get_dialogue("breeding"), "breeding")
+	if _selected.size() == 2:
+		_dialogue_system.start_dialogue(_dialogue_system.get_dialogue("punnett"), "punnett")
+
+func _on_dialogue_line(line: Dictionary) -> void:
+	dialogue_box.display_line(line)
+
+func _on_dialogue_started(_topic: String) -> void:
+	_set_info_text(DIALOGUE_INFO_TEXT)
+	pause_overlay.visible = false
+
+func _on_dialogue_ended(topic: String) -> void:
+	dialogue_box.hide_dialogue()
+	if topic == "punnett":
+		_hatch_selected_gecko()
+	else:
+		_set_info_text()
+
+func _advance_dialogue() -> void:
+	_dialogue_system.advance()
+
+func _hatch_selected_gecko() -> void:
+	if _selected.size() < 2:
+		return
+	var parent_a: GeckoEntity = _selected[0]
+	var parent_b: GeckoEntity = _selected[1]
+	var genes := GeneticsSystem.breed(parent_a.genes, parent_b.genes)
+	var parents := PackedStringArray([parent_a.gecko_name, parent_b.gecko_name])
+	var child := _spawn_gecko(genes, "Hatchling %d" % randi(), max(parent_a.generation, parent_b.generation) + 1, parents)
+	if child:
+		_selected.clear()
+		parent_a.set_selected(false)
+		parent_b.set_selected(false)
+		_set_info_text()
+		return
+	for entry in _selected:
+		entry.set_selected(false)
+	_selected.clear()
+	_set_info_text(TERRARIUM_FULL_TEXT)
+
+func _on_gecko_hovered(_gecko: GeckoEntity, info: String) -> void:
+	_set_info_text(info if not info.is_empty() else DEFAULT_INFO_TEXT)
+
+func _attach_gecko_signals(gecko: GeckoEntity) -> void:
+	if not gecko.gecko_selected.is_connected(_on_gecko_selected):
+		gecko.gecko_selected.connect(_on_gecko_selected)
+	if not gecko.gecko_hovered.is_connected(_on_gecko_hovered):
+		gecko.gecko_hovered.connect(_on_gecko_hovered)
+
+func _wire_existing_geckos() -> void:
+	for gecko in gecko_container.get_children():
+		if gecko is GeckoEntity:
+			_attach_gecko_signals(gecko)
+
+func _set_info_text(text: String = DEFAULT_INFO_TEXT) -> void:
+	info_label.text = text
+
+func _save_game() -> void:
+	SaveGame.save_game(get_tree())
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause") and not pause_overlay.visible:
+		if _dialogue_system.is_active():
+			return
+		get_viewport().set_input_as_handled()
+		get_tree().paused = true
+		pause_overlay.grab_button_focus()
+		pause_overlay.visible = true
+	elif event.is_action_pressed("ui_accept") and _dialogue_system.is_active():
+		get_viewport().set_input_as_handled()
+		dialogue_box.request_advance()

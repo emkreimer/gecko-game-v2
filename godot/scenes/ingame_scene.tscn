@@ -1,25 +1,66 @@
-[gd_scene load_steps=6 format=3 uid="uid://cik30de5gaaah"]
+[gd_scene load_steps=7 format=3 uid="uid://cik30de5gaaah"]
 
-[ext_resource type="Script" uid="uid://ovjegpk30m4h" path="res://scenes/ingame_scene.gd" id="1_objyc"]
-[ext_resource type="PackedScene" uid="uid://bkk87o2ooo6at" path="res://ui/overlays/fade_overlay.tscn" id="1_y6ebv"]
-[ext_resource type="Texture2D" uid="uid://dmelj2qgr8w7k" path="res://icon.svg" id="2_h1yxu"]
-[ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="3_8o178"]
-[ext_resource type="Script" uid="uid://cu3npowt4r1px" path="res://scenes/node_example.gd" id="3_a5686"]
+[ext_resource type="Script" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
+[ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
+[ext_resource type="PackedScene" uid="uid://bkk87o2ooo6at" path="res://ui/overlays/fade_overlay.tscn" id="3_2p62b"]
+[ext_resource type="PackedScene" uid="uid://dvrxu6ntetf8m" path="res://ui/components/dialogue_box.tscn" id="4_0xw65"]
+[ext_resource type="FontFile" uid="uid://duyg63qdy38vh" path="res://fonts/Montserrat-Medium.ttf" id="5_vbo4k"]
+[ext_resource type="Texture2D" uid="uid://dmelj2qgr8w7k" path="res://icon.svg" id="6_g6e5u"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_b4lin"]
+font = ExtResource("5_vbo4k")
+font_size = 26
+font_color = Color(0.1, 0.1, 0.1, 1)
 
 [node name="IngameScene" type="Node2D"]
-script = ExtResource("1_objyc")
+script = ExtResource("1_xbft2")
 
-[node name="NodeExample" type="Sprite2D" parent="." groups=["Persist"]]
-texture = ExtResource("2_h1yxu")
-script = ExtResource("3_a5686")
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.91, 0.95, 0.9, 1)
+
+[node name="Decor" type="Sprite2D" parent="."]
+texture = ExtResource("6_g6e5u")
+modulate = Color(1, 1, 1, 0.05)
+scale = Vector2(6, 6)
+position = Vector2(960, 540)
+
+[node name="TitleLabel" type="Label" parent="."]
+offset_left = 30.0
+offset_top = 20.0
+offset_right = 330.0
+offset_bottom = 72.0
+label_settings = SubResource("LabelSettings_b4lin")
+text = "Gecko Genetics Lab"
+
+[node name="InfoLabel" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+offset_left = 30.0
+offset_top = 80.0
+offset_right = 420.0
+offset_bottom = 250.0
+text = "Select two geckos to breed. Finish dialogue prompts to continue."
+scroll_active = false
+mouse_filter = 1
+
+[node name="GeckoContainer" type="Node2D" parent="."]
+unique_name_in_owner = true
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="FadeOverlay" parent="UI" instance=ExtResource("1_y6ebv")]
-unique_name_in_owner = true
-visible = false
+[node name="DialogueLayer" type="CanvasLayer" parent="UI"]
+layer = 1
 
-[node name="PauseOverlay" parent="UI" instance=ExtResource("3_8o178")]
+[node name="DialogueBox" parent="UI/DialogueLayer" instance=ExtResource("4_0xw65")]
+unique_name_in_owner = true
+
+[node name="PauseOverlay" parent="UI" instance=ExtResource("2_1l4sl")]
 unique_name_in_owner = true
 process_mode = 2
+visible = false
+
+[node name="FadeOverlay" parent="UI" instance=ExtResource("3_2p62b")]
+unique_name_in_owner = true
 visible = false
