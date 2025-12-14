@@ -11,10 +11,6 @@ const LOG_PREFIX := "[IngameController]"
 const SCENARIO_WILD := "wild"
 const SCENARIO_TERRARIUM := "terrarium"
 const STARTER_NAMES := ["Sunny", "Mango", "Pebble", "Nova", "Indie", "Zara", "Milo", "Roux"]
-const MENU_INFO := 1
-const MENU_RENAME := 2
-const MENU_BREED := 3
-const MENU_DELETE := 4
 
 @onready var gecko_container := %GeckoContainer
 @onready var dialogue_box: DialogueBox = %DialogueBox
@@ -23,8 +19,11 @@ const MENU_DELETE := 4
 @onready var info_label := %InfoLabel
 @onready var wild_background := %WildBackground
 @onready var terrarium_background := %TerrariumBackground
-@onready var explore_button := %ExploreButton
-@onready var context_menu: PopupMenu = %GeckoContextMenu
+@onready var actions_button: Button = %ActionsButton
+@onready var actions_menu: PopupPanel = %ActionsMenu
+@onready var change_scenario_button: Button = %ChangeScenarioButton
+@onready var open_inventory_button: Button = %OpenInventoryButton
+@onready var inventory_overlay: InventoryOverlay = %InventoryOverlay
 @onready var rename_dialog: AcceptDialog = %RenameDialog
 @onready var rename_line_edit: LineEdit = %RenameLineEdit
 @onready var delete_dialog: ConfirmationDialog = %DeleteDialog
@@ -51,13 +50,18 @@ func _ready() -> void:
 	dialogue_box.advance_requested.connect(_advance_dialogue)
 	dialogue_box.punnett_closed.connect(_on_punnett_closed)
 	pause_overlay.game_exited.connect(_save_game)
-	explore_button.pressed.connect(_toggle_scenario)
-	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
+	actions_button.pressed.connect(_on_actions_button_pressed)
+	change_scenario_button.pressed.connect(_on_change_scenario_pressed)
+	open_inventory_button.pressed.connect(_on_open_inventory_pressed)
+	if inventory_overlay:
+		inventory_overlay.breed_requested.connect(_on_inventory_breed_requested)
+		inventory_overlay.delete_requested.connect(_on_inventory_delete_requested)
+		inventory_overlay.rename_requested.connect(_on_inventory_rename_requested)
+		inventory_overlay.closed.connect(_on_inventory_closed)
 	rename_dialog.confirmed.connect(_on_rename_confirmed)
 	rename_line_edit.text_submitted.connect(func(_text): _on_rename_confirmed())
 	delete_dialog.confirmed.connect(_on_delete_confirmed)
-	_ensure_context_menu_items()
-	context_menu.hide()
+	actions_menu.hide()
 	fade_overlay.visible = true
 	if SaveGame.has_save():
 		SaveGame.load_game(get_tree())
@@ -140,39 +144,14 @@ func _on_gecko_selected(gecko: GeckoEntity) -> void:
 			return
 	print(LOG_PREFIX, " gecko clicked", gecko.gecko_name)
 	_context_gecko = gecko
-	_show_context_menu_at_mouse()
+	_set_info_text(gecko.get_info_text(), true)
+	if not inventory_overlay.visible:
+		_clear_selection_visuals()
+		gecko.set_selected(true)
 
-func _ensure_context_menu_items() -> void:
-	if not context_menu:
-		return
-	context_menu.clear()
-	context_menu.add_item("See infos", MENU_INFO)
-	context_menu.add_item("Rename", MENU_RENAME)
-	context_menu.add_item("Breed", MENU_BREED)
-	context_menu.add_separator()
-	context_menu.add_item("Delete", MENU_DELETE)
-
-func _show_context_menu_at_mouse() -> void:
-	if not context_menu or not _context_gecko:
-		return
-	var mouse_position := get_viewport().get_mouse_position()
-	context_menu.position = mouse_position
-	context_menu.reset_size()
-	context_menu.popup()
-	context_menu.grab_focus()
-
-func _on_context_menu_id_pressed(id: int) -> void:
-	if not _context_gecko:
-		return
-	match id:
-		MENU_INFO:
-			_show_gecko_info(_context_gecko)
-		MENU_RENAME:
-			_open_rename_dialog(_context_gecko)
-		MENU_BREED:
-			_toggle_breed_selection(_context_gecko)
-		MENU_DELETE:
-			_open_delete_dialog(_context_gecko)
+func _clear_selection_visuals() -> void:
+	for gecko in _get_geckos():
+		gecko.set_selected(false)
 
 func _show_gecko_info(gecko: GeckoEntity) -> void:
 	if not gecko:
@@ -238,6 +217,7 @@ func _on_rename_confirmed() -> void:
 	_context_gecko.set_gecko_name(new_name)
 	_set_info_text("Renamed to %s" % new_name, true)
 	rename_dialog.hide()
+	_refresh_inventory_overlay()
 
 func _open_delete_dialog(gecko: GeckoEntity) -> void:
 	if not gecko or not delete_dialog:
@@ -264,6 +244,7 @@ func _delete_gecko(gecko: GeckoEntity) -> void:
 	dialogue_box.hide_punnett()
 	_set_info_text("Gecko deleted.", true)
 	_context_gecko = null
+	_refresh_inventory_overlay()
 
 func _on_dialogue_line(line: Dictionary) -> void:
 	dialogue_box.display_line(line)
@@ -327,6 +308,7 @@ func _hatch_selected_gecko() -> void:
 		else:
 			_set_info_text("New hatchling is waiting in the terrarium. Switch scenes to meet them.")
 		_pending_punnett_entries.clear()
+		_refresh_inventory_overlay()
 		return
 	print(LOG_PREFIX, " hatch failed - terrarium full")
 	for entry in _selected:
@@ -380,6 +362,80 @@ func _set_info_text(text: String = DEFAULT_INFO_TEXT, show_box: bool = false) ->
 	info_label.text = text
 	info_label.visible = show_box and not text.is_empty()
 
+func _on_actions_button_pressed() -> void:
+	if not actions_menu:
+		return
+	if actions_menu.visible:
+		actions_menu.hide()
+		return
+	actions_menu.reset_size()
+	var button_global: Rect2 = actions_button.get_global_rect()
+	var popup_size: Vector2 = Vector2(240, 0)
+	if actions_menu.has_method("get_size"): # compat fallback
+		popup_size = actions_menu.get_size()
+	elif actions_menu.has_method("get_combined_minimum_size"):
+		popup_size = actions_menu.get_combined_minimum_size()
+	elif actions_menu.has_method("get_minimum_size"):
+		popup_size = actions_menu.get_minimum_size()
+	if popup_size == Vector2.ZERO:
+		popup_size = Vector2(240, 0)
+	actions_menu.position = Vector2(button_global.position.x + button_global.size.x - popup_size.x, button_global.end.y + 4)
+	actions_menu.popup()
+	actions_menu.grab_focus()
+
+func _on_change_scenario_pressed() -> void:
+	_toggle_scenario()
+	actions_menu.hide()
+
+func _on_open_inventory_pressed() -> void:
+	actions_menu.hide()
+	_show_inventory_overlay()
+
+func _show_inventory_overlay() -> void:
+	if not inventory_overlay:
+		return
+	inventory_overlay.show_inventory(_get_geckos(), _current_scenario)
+	_set_info_text("", false)
+
+func _on_inventory_closed() -> void:
+	_set_info_text()
+
+func _on_inventory_breed_requested(gecko_a: GeckoEntity, gecko_b: GeckoEntity) -> void:
+	if not gecko_a or not gecko_b:
+		return
+	if gecko_a.sex == gecko_b.sex:
+		_set_info_text("Pick one male and one female to breed.", true)
+		return
+	_selected.clear()
+	_selected.append_array([gecko_a, gecko_b])
+	gecko_a.set_selected(true)
+	gecko_b.set_selected(true)
+	_show_punnett_square(gecko_a, gecko_b)
+	_dialogue_system.start_dialogue(_dialogue_system.get_dialogue("punnett"), "punnett")
+
+func _on_inventory_rename_requested(gecko: GeckoEntity) -> void:
+	if not gecko:
+		return
+	_context_gecko = gecko
+	_open_rename_dialog(gecko)
+
+func _on_inventory_delete_requested(gecko: GeckoEntity) -> void:
+	if not gecko:
+		return
+	_context_gecko = gecko
+	_open_delete_dialog(gecko)
+
+func _refresh_inventory_overlay() -> void:
+	if inventory_overlay:
+		inventory_overlay.refresh_inventory(_get_geckos(), _current_scenario)
+
+func _get_geckos() -> Array:
+	var result: Array = []
+	for child in gecko_container.get_children():
+		if child is GeckoEntity:
+			result.append(child)
+	return result
+
 func _toggle_scenario() -> void:
 	var target := SCENARIO_TERRARIUM if _current_scenario == SCENARIO_WILD else SCENARIO_WILD
 	_switch_scenario(target)
@@ -388,12 +444,18 @@ func _switch_scenario(target: String) -> void:
 	_current_scenario = target
 	wild_background.visible = target == SCENARIO_WILD
 	terrarium_background.visible = target == SCENARIO_TERRARIUM
-	if target == SCENARIO_WILD:
-		explore_button.text = "Go to Terrarium"
-	else:
-		explore_button.text = "Explore Wild"
+	_update_change_scenario_button()
 	_apply_scene_visibility()
 	_set_info_text()
+	actions_menu.hide()
+
+func _update_change_scenario_button() -> void:
+	if not change_scenario_button:
+		return
+	if _current_scenario == SCENARIO_WILD:
+		change_scenario_button.text = "Go to Terrarium"
+	else:
+		change_scenario_button.text = "Explore Wild"
 
 func _apply_scene_visibility() -> void:
 	for gecko in gecko_container.get_children():

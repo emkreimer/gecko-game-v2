@@ -1,0 +1,192 @@
+[gd_scene load_steps=3 format=3 uid="uid://p3lltlvkxnfw"]
+
+[ext_resource type="Script" uid="uid://djf6i53daqnu0" path="res://ui/overlays/inventory_overlay.gd" id="1_inventory"]
+[ext_resource type="Texture2D" uid="uid://bqb028ns2q2o2" path="res://assets/inventory/inventory.png" id="2_inventory"]
+
+[node name="InventoryOverlay" type="CanvasLayer"]
+layer = 6
+script = ExtResource("1_inventory")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="Root" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Background" type="NinePatchRect" parent="Root"]
+modulate = Color(1, 1, 1, 0.92)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+texture = ExtResource("2_inventory")
+patch_margin_left = 24
+patch_margin_top = 24
+patch_margin_right = 24
+patch_margin_bottom = 24
+
+[node name="Content" type="MarginContainer" parent="Root"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="ContentHBox" type="HBoxContainer" parent="Root/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="Left" type="VBoxContainer" parent="Root/Content/ContentHBox"]
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="LeftTitle" type="Label" parent="Root/Content/ContentHBox/Left"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Owned Geckos"
+
+[node name="GeckoList" type="ItemList" parent="Root/Content/ContentHBox/Left"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 420)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+allow_reselect = true
+
+[node name="Right" type="VBoxContainer" parent="Root/Content/ContentHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="NameLabel" type="Label" parent="Root/Content/ContentHBox/Right"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Select a gecko"
+
+[node name="InfoRow" type="HBoxContainer" parent="Root/Content/ContentHBox/Right"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="SexLabel" type="Label" parent="Root/Content/ContentHBox/Right/InfoRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sex: -"
+
+[node name="HabitatLabel" type="Label" parent="Root/Content/ContentHBox/Right/InfoRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Habitat: -"
+
+[node name="GenerationLabel" type="Label" parent="Root/Content/ContentHBox/Right/InfoRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Gen: -"
+
+[node name="PartnerRow" type="HBoxContainer" parent="Root/Content/ContentHBox/Right"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="PartnerLabel" type="Label" parent="Root/Content/ContentHBox/Right/PartnerRow"]
+layout_mode = 2
+text = "Partner"
+
+[node name="PartnerOption" type="OptionButton" parent="Root/Content/ContentHBox/Right/PartnerRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PreviewPanel" type="Panel" parent="Root/Content/ContentHBox/Right"]
+custom_minimum_size = Vector2(340, 200)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+
+[node name="PreviewHolder" type="SubViewportContainer" parent="Root/Content/ContentHBox/Right/PreviewPanel"]
+layout_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+
+[node name="PreviewViewport" type="SubViewport" parent="Root/Content/ContentHBox/Right/PreviewPanel/PreviewHolder"]
+unique_name_in_owner = true
+disable_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(2, 2)
+render_target_update_mode = 4
+
+[node name="PreviewRoot" type="Node2D" parent="Root/Content/ContentHBox/Right/PreviewPanel/PreviewHolder/PreviewViewport"]
+unique_name_in_owner = true
+position = Vector2(190, 150)
+scale = Vector2(2, 2)
+
+[node name="InfoTitle" type="Label" parent="Root/Content/ContentHBox/Right"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Information"
+
+[node name="InfoLabel" type="RichTextLabel" parent="Root/Content/ContentHBox/Right"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+bbcode_enabled = true
+autowrap_mode = 1
+
+[node name="PunnettTitle" type="Label" parent="Root/Content/ContentHBox/Right"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Punnett Square"
+
+[node name="PunnettLabel" type="RichTextLabel" parent="Root/Content/ContentHBox/Right"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+bbcode_enabled = true
+text = "Select two geckos to preview the Punnett square."
+autowrap_mode = 1
+
+[node name="ActionsRow" type="HBoxContainer" parent="Root/Content/ContentHBox/Right"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="BreedButton" type="Button" parent="Root/Content/ContentHBox/Right/ActionsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Breed"
+
+[node name="RenameButton" type="Button" parent="Root/Content/ContentHBox/Right/ActionsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rename"
+
+[node name="DeleteButton" type="Button" parent="Root/Content/ContentHBox/Right/ActionsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Delete"
+
+[node name="CloseButton" type="Button" parent="Root/Content/ContentHBox/Right/ActionsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close"

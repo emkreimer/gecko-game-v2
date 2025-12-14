@@ -1,14 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://cik30de5gaaah"]
+[gd_scene load_steps=13 format=3 uid="uid://cik30de5gaaah"]
 
 [ext_resource type="Script" uid="uid://dg0oyskx8up1s" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
 [ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
 [ext_resource type="Texture2D" uid="uid://dhlwh845mh6hc" path="res://assets/bg/wild_bg2 (1).jpg" id="2_vus8m"]
 [ext_resource type="PackedScene" uid="uid://bkk87o2ooo6at" path="res://ui/overlays/fade_overlay.tscn" id="3_2p62b"]
 [ext_resource type="Texture2D" uid="uid://b0jjcasjtde2" path="res://assets/bg/terrarium.jpg" id="3_vus8m"]
-[ext_resource type="PackedScene" path="res://ui/components/dialogue_box.tscn" id="4_0xw65"]
+[ext_resource type="PackedScene" uid="uid://dvrxu6ntetf8m" path="res://ui/components/dialogue_box.tscn" id="4_0xw65"]
 [ext_resource type="Texture2D" uid="uid://dmelj2qgr8w7k" path="res://icon.svg" id="6_g6e5u"]
 [ext_resource type="PackedScene" uid="uid://5q503rd02og7" path="res://ui/overlays/punnett_overlay.tscn" id="8_pnnet"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu.png" id="9_menu"]
+[ext_resource type="Texture2D" uid="uid://mtguh6qvqvwa" path="res://assets/ui/menu.png" id="9_menu"]
+[ext_resource type="PackedScene" uid="uid://p3lltlvkxnfw" path="res://ui/overlays/inventory_overlay.tscn" id="10_inv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleInfoBox"]
 content_margin_left = 10.0
@@ -23,10 +24,6 @@ corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxTexture" id="StyleMenu"]
 texture = ExtResource("9_menu")
-margin_left = 16.0
-margin_right = 16.0
-margin_top = 12.0
-margin_bottom = 12.0
 
 [node name="IngameScene" type="Node2D"]
 script = ExtResource("1_xbft2")
@@ -97,17 +94,41 @@ offset_top = -101.0
 offset_right = 55.600037
 offset_bottom = -3.0
 
-[node name="ExploreButton" type="Button" parent="UI"]
+[node name="ActionsButton" type="Button" parent="UI"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(70, 70)
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -240.0
+offset_left = -90.0
 offset_top = 20.0
 offset_right = -20.0
-offset_bottom = 60.0
+offset_bottom = 90.0
 grow_horizontal = 0
+text = "Menu"
+
+[node name="ActionsMenu" type="PopupPanel" parent="UI"]
+unique_name_in_owner = true
+oversampling_override = 1.0
+size = Vector2i(132, 100)
+theme_override_styles/panel = SubResource("StyleMenu")
+
+[node name="ActionsVBox" type="VBoxContainer" parent="UI/ActionsMenu"]
+offset_right = 132.0
+offset_bottom = 100.0
+size_flags_horizontal = 3
+
+[node name="ChangeScenarioButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Go to Terrarium"
+
+[node name="OpenInventoryButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Open Inventory"
 
 [node name="PauseOverlay" parent="UI" instance=ExtResource("2_1l4sl")]
 unique_name_in_owner = true
@@ -120,19 +141,15 @@ visible = false
 
 [node name="PunnettOverlay" parent="UI" instance=ExtResource("8_pnnet")]
 unique_name_in_owner = true
-
-[node name="GeckoContextMenu" type="PopupMenu" parent="UI"]
-unique_name_in_owner = true
-oversampling_override = 1.0
 visible = false
-theme_override_styles/panel = SubResource("StyleMenu")
-custom_minimum_size = Vector2(260, 0)
+
+[node name="InventoryOverlay" parent="UI" instance=ExtResource("10_inv")]
+unique_name_in_owner = true
 
 [node name="RenameDialog" type="AcceptDialog" parent="UI"]
 unique_name_in_owner = true
 oversampling_override = 1.0
 title = "Rename Gecko"
-visible = false
 
 [node name="RenameLineEdit" type="LineEdit" parent="UI/RenameDialog"]
 unique_name_in_owner = true
@@ -145,4 +162,3 @@ offset_bottom = 51.0
 unique_name_in_owner = true
 oversampling_override = 1.0
 title = "Delete Gecko"
-visible = false
