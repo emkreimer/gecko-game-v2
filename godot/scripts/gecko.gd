@@ -19,6 +19,8 @@ var gecko_name := "Unnamed"
 var generation := 1
 var genes: Dictionary = {}
 var parents: PackedStringArray = []
+var sex := ""
+var habitat := "wild"  # wild or terrarium
 
 var _selected := false
 var _frame := 0
@@ -45,10 +47,12 @@ func _ready() -> void:
 	if not genes.is_empty():
 		_update_from_genes()
 
-func initialize(p_genes: Dictionary, p_name: String, p_generation: int, p_parents: PackedStringArray = []) -> void:
+func initialize(p_genes: Dictionary, p_name: String, p_generation: int, p_parents: PackedStringArray = [], p_sex: String = "", p_habitat: String = "wild") -> void:
 	gecko_name = p_name
 	generation = p_generation
 	parents = p_parents.duplicate()
+	sex = p_sex if not p_sex.is_empty() else "M"
+	habitat = p_habitat
 	genes = {}
 	for trait_key in p_genes.keys():
 		var gene: Gene = p_genes[trait_key]
@@ -68,7 +72,9 @@ func is_selected() -> bool:
 
 func get_info_text() -> String:
 	if _info_cache.is_empty():
-		_info_cache = GeneticsSystem.build_info_text(genes)
+		var header := "Sex: %s | Habitat: %s" % [sex, habitat.capitalize()]
+		var genetics := GeneticsSystem.build_info_text(genes)
+		_info_cache = header + "\n" + genetics
 	return _info_cache
 
 func save_data() -> Dictionary:
@@ -76,13 +82,17 @@ func save_data() -> Dictionary:
 		"name": gecko_name,
 		"generation": generation,
 		"parents": parents,
-		"genes": GeneticsSystem.serialize_genes(genes)
+		"genes": GeneticsSystem.serialize_genes(genes),
+		"sex": sex,
+		"habitat": habitat
 	}
 
 func load_data(data: Dictionary) -> void:
 	gecko_name = data.get("name", gecko_name)
 	generation = data.get("generation", generation)
 	parents = data.get("parents", [])
+	sex = data.get("sex", sex if not sex.is_empty() else "M")
+	habitat = data.get("habitat", habitat)
 	genes = GeneticsSystem.deserialize_genes(data.get("genes", []))
 	_update_from_genes()
 
@@ -117,7 +127,7 @@ func _update_from_genes() -> void:
 
 func _update_name_label() -> void:
 	if name_label:
-		name_label.text = "%s (Gen %d)" % [gecko_name, generation]
+		name_label.text = "%s [%s] (Gen %d)" % [gecko_name, sex, generation]
 
 func _on_animation_timer_timeout() -> void:
 	_frame = (_frame + 1) % 4

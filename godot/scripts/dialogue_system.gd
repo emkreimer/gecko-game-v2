@@ -5,15 +5,10 @@ signal dialogue_started(topic)
 signal dialogue_line_displayed(line)
 signal dialogue_ended(topic)
 
-const INTRO_DIALOGUE := [
-	{"speaker": "Professor Lado", "text": "Welcome to Geckolado Lab! Today we will learn how Mendelian genetics shapes our gecko friends."},
-	{"speaker": "Professor Lado", "text": "Each gecko carries two alleles per trait. Uppercase alleles are dominant, lowercase are recessive."},
-	{"speaker": "Lab Assistant", "text": "Try selecting two starter geckos. We will help you predict what their hatchling might look like."}
-]
-
 const BREEDING_EXPLANATION := [
-	{"speaker": "Professor Lado", "text": "When two geckos breed, each contributes one allele for every gene. The combination defines the offspring's genotype."},
-	{"speaker": "Professor Lado", "text": "Remember: dominant alleles mask recessive partners, but recessives can hide within heterozygous pairs."}
+	{"speaker": "", "text": "When two geckos breed, each contributes one allele for every gene. The combination defines the offspring's genotype."},
+	{"speaker": "", "text": "Pick one male and one female partner to make a viable clutch."},
+	{"speaker": "", "text": "Dominant alleles mask recessive partners, but recessives can hide within heterozygous pairs."}
 ]
 
 const PUNNETT_SQUARE_EXPLANATION := [
@@ -55,10 +50,33 @@ func _finish_dialogue() -> void:
 	_lines.clear()
 	dialogue_ended.emit(topic)
 
+func build_intro_primary(speaker_name: String) -> Array:
+	return [
+		{"speaker": speaker_name, "text": "Hi! I'm %s. You must be new around here, right?" % [speaker_name]},
+		{"speaker": speaker_name, "text": "Don’t worry, you’ll fit right in. Our little gecko community is always growing."},
+		{"speaker": speaker_name, "text": "Around here, no two geckos are exactly alike."},
+		{"speaker": speaker_name, "text": "That’s not random — it all comes down to how traits are passed on."},
+	]
+
+func build_spouse_intro(guide_name: String, spouse_name: String) -> Array:
+	return [
+		{"speaker": guide_name, "text": "Oh! And this is %s — my partner." % [spouse_name]},
+		{"speaker": spouse_name, "text": "Hi there! Nice to meet you."},
+		{"speaker": guide_name, "text": "Together, we each pass along genes to our offspring."},
+		{"speaker": guide_name, "text": "Some traits are dominant and easy to spot, while others are recessive and can stay hidden for generations."},
+		{"speaker": spouse_name, "text": "Think of it like a genetic coin flip — each parent contributes one allele."},
+	]
+
+func build_breeding_prompt(guide_name: String, spouse_name: String) -> Array:
+	return [
+		{"speaker": guide_name, "text": "Try selecting me and %s. You'll see our Punnett square and hatch a baby in the terrarium." % spouse_name},
+		{"speaker": spouse_name, "text": "Remember: you need one male and one female to breed. Switch scenes any time with the Explore button."}
+	]
+
 func get_dialogue(topic: String) -> Array:
 	match topic:
 		"intro":
-			return INTRO_DIALOGUE.duplicate(true)
+			return []
 		"breeding":
 			return BREEDING_EXPLANATION.duplicate(true)
 		"punnett":

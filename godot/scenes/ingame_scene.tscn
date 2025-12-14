@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://cik30de5gaaah"]
+[gd_scene load_steps=9 format=3 uid="uid://cik30de5gaaah"]
 
 [ext_resource type="Script" uid="uid://dg0oyskx8up1s" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
 [ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
 [ext_resource type="PackedScene" uid="uid://bkk87o2ooo6at" path="res://ui/overlays/fade_overlay.tscn" id="3_2p62b"]
+[ext_resource type="Texture2D" uid="uid://ta80vaah4hh4" path="res://assets/bg/terrarium2.png" id="3_vus8m"]
 [ext_resource type="PackedScene" uid="uid://dvrxu6ntetf8m" path="res://ui/components/dialogue_box.tscn" id="4_0xw65"]
 [ext_resource type="Texture2D" uid="uid://dmelj2qgr8w7k" path="res://icon.svg" id="6_g6e5u"]
 [ext_resource type="Texture2D" uid="uid://cmo5unq3usp5l" path="res://assets/bg/wild_bg.png" id="7_wildb"]
@@ -11,7 +12,9 @@
 [node name="IngameScene" type="Node2D"]
 script = ExtResource("1_xbft2")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="WildBackground" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -23,6 +26,21 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_stretch_ratio = 6.0
 texture = ExtResource("7_wildb")
+expand_mode = 1
+
+[node name="TerrariumBackground" type="TextureRect" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 581.0
+offset_bottom = 409.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_stretch_ratio = 6.0
+texture = ExtResource("3_vus8m")
 expand_mode = 1
 
 [node name="Decor" type="Sprite2D" parent="."]
@@ -55,6 +73,26 @@ offset_left = -56.600002
 offset_top = -98.0
 offset_right = 56.600037
 offset_bottom = -11.0
+
+[node name="ScenarioLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_left = 36.0
+offset_top = 24.0
+offset_right = 320.0
+offset_bottom = 56.0
+text = "Wild Habitat"
+
+[node name="ExploreButton" type="Button" parent="UI"]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -240.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 60.0
+grow_horizontal = 0
+text = "Go to Terrarium"
 
 [node name="PauseOverlay" parent="UI" instance=ExtResource("2_1l4sl")]
 unique_name_in_owner = true
