@@ -1,13 +1,14 @@
-[gd_scene load_steps=10 format=3 uid="uid://cik30de5gaaah"]
+[gd_scene load_steps=11 format=3 uid="uid://cik30de5gaaah"]
 
 [ext_resource type="Script" uid="uid://dg0oyskx8up1s" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
 [ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
 [ext_resource type="Texture2D" uid="uid://dhlwh845mh6hc" path="res://assets/bg/wild_bg2 (1).jpg" id="2_vus8m"]
 [ext_resource type="PackedScene" uid="uid://bkk87o2ooo6at" path="res://ui/overlays/fade_overlay.tscn" id="3_2p62b"]
 [ext_resource type="Texture2D" uid="uid://b0jjcasjtde2" path="res://assets/bg/terrarium.jpg" id="3_vus8m"]
-[ext_resource type="PackedScene" uid="uid://dvrxu6ntetf8m" path="res://ui/components/dialogue_box.tscn" id="4_0xw65"]
+[ext_resource type="PackedScene" path="res://ui/components/dialogue_box.tscn" id="4_0xw65"]
 [ext_resource type="Texture2D" uid="uid://dmelj2qgr8w7k" path="res://icon.svg" id="6_g6e5u"]
 [ext_resource type="PackedScene" uid="uid://5q503rd02og7" path="res://ui/overlays/punnett_overlay.tscn" id="8_pnnet"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu.png" id="9_menu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleInfoBox"]
 content_margin_left = 10.0
@@ -19,6 +20,13 @@ corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxTexture" id="StyleMenu"]
+texture = ExtResource("9_menu")
+margin_left = 16.0
+margin_right = 16.0
+margin_top = 12.0
+margin_bottom = 12.0
 
 [node name="IngameScene" type="Node2D"]
 script = ExtResource("1_xbft2")
@@ -77,25 +85,17 @@ unique_name_in_owner = true
 scale = Vector2(0.3, 0.3)
 
 [node name="UI" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
 
 [node name="DialogueLayer" type="CanvasLayer" parent="UI"]
+unique_name_in_owner = true
 
 [node name="DialogueBox" parent="UI/DialogueLayer" instance=ExtResource("4_0xw65")]
 unique_name_in_owner = true
-visible = true
-anchors_preset = -1
-offset_left = -56.600002
-offset_top = -98.0
-offset_right = 56.600037
-offset_bottom = -11.0
-
-[node name="ScenarioLabel" type="Label" parent="UI"]
-unique_name_in_owner = true
-offset_left = 36.0
-offset_top = 24.0
-offset_right = 320.0
-offset_bottom = 56.0
-text = "Wild Habitat"
+offset_left = -57.600002
+offset_top = -101.0
+offset_right = 55.600037
+offset_bottom = -3.0
 
 [node name="ExploreButton" type="Button" parent="UI"]
 unique_name_in_owner = true
@@ -123,18 +123,26 @@ unique_name_in_owner = true
 
 [node name="GeckoContextMenu" type="PopupMenu" parent="UI"]
 unique_name_in_owner = true
+oversampling_override = 1.0
+visible = false
+theme_override_styles/panel = SubResource("StyleMenu")
+custom_minimum_size = Vector2(260, 0)
 
 [node name="RenameDialog" type="AcceptDialog" parent="UI"]
 unique_name_in_owner = true
+oversampling_override = 1.0
 title = "Rename Gecko"
+visible = false
 
 [node name="RenameLineEdit" type="LineEdit" parent="UI/RenameDialog"]
 unique_name_in_owner = true
-offset_left = 16.0
-offset_top = 32.0
-offset_right = 320.0
-offset_bottom = 64.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 92.0
+offset_bottom = 51.0
 
 [node name="DeleteDialog" type="ConfirmationDialog" parent="UI"]
 unique_name_in_owner = true
+oversampling_override = 1.0
 title = "Delete Gecko"
+visible = false

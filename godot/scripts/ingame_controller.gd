@@ -24,7 +24,6 @@ const MENU_DELETE := 4
 @onready var wild_background := %WildBackground
 @onready var terrarium_background := %TerrariumBackground
 @onready var explore_button := %ExploreButton
-@onready var scenario_label := %ScenarioLabel
 @onready var context_menu: PopupMenu = %GeckoContextMenu
 @onready var rename_dialog: AcceptDialog = %RenameDialog
 @onready var rename_line_edit: LineEdit = %RenameLineEdit
@@ -390,10 +389,8 @@ func _switch_scenario(target: String) -> void:
 	wild_background.visible = target == SCENARIO_WILD
 	terrarium_background.visible = target == SCENARIO_TERRARIUM
 	if target == SCENARIO_WILD:
-		scenario_label.text = "Wild Habitat"
 		explore_button.text = "Go to Terrarium"
 	else:
-		scenario_label.text = "Terrarium"
 		explore_button.text = "Explore Wild"
 	_apply_scene_visibility()
 	_set_info_text()

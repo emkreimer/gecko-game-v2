@@ -5,39 +5,39 @@ const TRAITS := {
 	"color": {
 		"gene_name": "Body Color",
 		"alleles": {
-			"R": {"name": "Ruby Red", "dominant": true, "color": Color(0.91, 0.32, 0.32), "description": "Fiery ruby hide."},
-			"O": {"name": "Sunset Orange", "dominant": true, "color": Color(0.99, 0.55, 0.21), "description": "Warm orange pigment."},
-			"y": {"name": "Lemon Yellow", "dominant": false, "color": Color(0.99, 0.91, 0.37), "description": "Soft lemon hue."}
+			"R": {"name": "Ruby Red", "dominant": true, "color": Color(0.91, 0.32, 0.32), "description": "Ruby hide."},
+			"O": {"name": "Sunset Orange", "dominant": true, "color": Color(0.99, 0.55, 0.21), "description": "Orange hide."},
+			"y": {"name": "Lemon Yellow", "dominant": false, "color": Color(0.99, 0.91, 0.37), "description": "Lemon hide."}
 		}
 	},
 	"eye_color": {
 		"gene_name": "Eye Color",
 		"alleles": {
-			"G": {"name": "Emerald", "dominant": true, "color": Color(0.3, 0.78, 0.43), "description": "Bright emerald gaze."},
-			"B": {"name": "Cobalt", "dominant": true, "color": Color(0.24, 0.48, 0.93), "description": "Cool cobalt stare."},
+			"G": {"name": "Emerald", "dominant": true, "color": Color(0.3, 0.78, 0.43), "description": "Bright emerald eyes."},
+			"B": {"name": "Cobalt", "dominant": true, "color": Color(0.24, 0.48, 0.93), "description": "Cool cobalt eyes."},
 			"g": {"name": "Hazel", "dominant": false, "color": Color(0.59, 0.44, 0.18), "description": "Mellow hazel eyes."}
 		}
 	},
 	"pattern": {
 		"gene_name": "Pattern",
 		"alleles": {
-			"S": {"name": "Spotted", "dominant": true, "spots_visible": true, "description": "Bold high-contrast spots."},
+			"S": {"name": "Spotted", "dominant": true, "spots_visible": true, "description": "Spotted hide."},
 			"s": {"name": "Smooth", "dominant": false, "spots_visible": false, "description": "Uniform scales."}
 		}
 	},
 	"size": {
 		"gene_name": "Size",
 		"alleles": {
-			"L": {"name": "Large", "dominant": true, "scale": 1.15, "description": "Large-frame gecko."},
-			"m": {"name": "Medium", "dominant": false, "scale": 1.0, "description": "Balanced build."},
-			"s": {"name": "Small", "dominant": false, "scale": 0.85, "description": "Compact frame."}
+			"L": {"name": "Large", "dominant": true, "scale": 1.15, "description": "Large."},
+			"m": {"name": "Medium", "dominant": false, "scale": 1.0, "description": "Balanced."},
+			"s": {"name": "Small", "dominant": false, "scale": 0.85, "description": "Small."}
 		}
 	},
 	"tail": {
 		"gene_name": "Tail",
 		"alleles": {
-			"T": {"name": "Thick", "dominant": true, "scale": 1.1, "description": "Thick energy-storing tail."},
-			"t": {"name": "Slender", "dominant": false, "scale": 0.9, "description": "Slender whip-like tail."}
+			"T": {"name": "Thick", "dominant": true, "scale": 1.1, "description": "Thick tail."},
+			"t": {"name": "Slender", "dominant": false, "scale": 0.9, "description": "Whip-like tail."}
 		}
 	}
 }
