@@ -34,6 +34,8 @@ var _preview_instance: GeckoEntity
 func _ready() -> void:
 	hide_overlay()
 	gecko_list.item_selected.connect(_on_list_selected)
+	gecko_list.item_clicked.connect(_on_list_item_clicked)
+	gecko_list.item_activated.connect(_on_list_selected)
 	partner_option.item_selected.connect(_on_partner_selected)
 	breed_button.pressed.connect(_on_breed_pressed)
 	rename_button.pressed.connect(_on_rename_pressed)
@@ -89,6 +91,9 @@ func _on_list_selected(index: int) -> void:
 		return
 	_set_selected(_geckos[index])
 	_set_partner(_find_first_partner())
+
+func _on_list_item_clicked(index: int, _at_position: Vector2, _button_index: int, _shift_pressed: bool = false) -> void:
+	_on_list_selected(index)
 
 func _set_selected(gecko: GeckoEntity) -> void:
 	_selected = gecko

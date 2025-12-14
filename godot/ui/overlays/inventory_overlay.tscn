@@ -20,6 +20,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Background" type="NinePatchRect" parent="Root"]
 modulate = Color(1, 1, 1, 0.92)
@@ -34,32 +36,46 @@ patch_margin_right = 24
 patch_margin_bottom = 24
 
 [node name="Content" type="MarginContainer" parent="Root"]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
+offset_left = -1.6000023
+offset_right = 66.400024
+offset_bottom = 23.777802
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.9, 0.9)
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="ContentHBox" type="HBoxContainer" parent="Root/Content"]
+[node name="ContentScroll" type="ScrollContainer" parent="Root/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="ContentHBox" type="HBoxContainer" parent="Root/Content/ContentScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="Left" type="VBoxContainer" parent="Root/Content/ContentHBox"]
+[node name="Left" type="VBoxContainer" parent="Root/Content/ContentScroll/ContentHBox"]
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="LeftTitle" type="Label" parent="Root/Content/ContentHBox/Left"]
+[node name="LeftTitle" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Left"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Owned Geckos"
 
-[node name="GeckoList" type="ItemList" parent="Root/Content/ContentHBox/Left"]
+[node name="GeckoList" type="ItemList" parent="Root/Content/ContentScroll/ContentHBox/Left"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(260, 420)
 layout_mode = 2
@@ -68,65 +84,65 @@ size_flags_vertical = 3
 select_mode = 1
 allow_reselect = true
 
-[node name="Right" type="VBoxContainer" parent="Root/Content/ContentHBox"]
+[node name="Right" type="VBoxContainer" parent="Root/Content/ContentScroll/ContentHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 
-[node name="NameLabel" type="Label" parent="Root/Content/ContentHBox/Right"]
+[node name="NameLabel" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Select a gecko"
 
-[node name="InfoRow" type="HBoxContainer" parent="Root/Content/ContentHBox/Right"]
+[node name="InfoRow" type="HBoxContainer" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="SexLabel" type="Label" parent="Root/Content/ContentHBox/Right/InfoRow"]
+[node name="SexLabel" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Right/InfoRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Sex: -"
 
-[node name="HabitatLabel" type="Label" parent="Root/Content/ContentHBox/Right/InfoRow"]
+[node name="HabitatLabel" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Right/InfoRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Habitat: -"
 
-[node name="GenerationLabel" type="Label" parent="Root/Content/ContentHBox/Right/InfoRow"]
+[node name="GenerationLabel" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Right/InfoRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Gen: -"
 
-[node name="PartnerRow" type="HBoxContainer" parent="Root/Content/ContentHBox/Right"]
+[node name="PartnerRow" type="HBoxContainer" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="PartnerLabel" type="Label" parent="Root/Content/ContentHBox/Right/PartnerRow"]
+[node name="PartnerLabel" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Right/PartnerRow"]
 layout_mode = 2
 text = "Partner"
 
-[node name="PartnerOption" type="OptionButton" parent="Root/Content/ContentHBox/Right/PartnerRow"]
+[node name="PartnerOption" type="OptionButton" parent="Root/Content/ContentScroll/ContentHBox/Right/PartnerRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PreviewPanel" type="Panel" parent="Root/Content/ContentHBox/Right"]
+[node name="PreviewPanel" type="Panel" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 custom_minimum_size = Vector2(340, 200)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 2
 
-[node name="PreviewHolder" type="SubViewportContainer" parent="Root/Content/ContentHBox/Right/PreviewPanel"]
+[node name="PreviewHolder" type="SubViewportContainer" parent="Root/Content/ContentScroll/ContentHBox/Right/PreviewPanel"]
 layout_mode = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
 
-[node name="PreviewViewport" type="SubViewport" parent="Root/Content/ContentHBox/Right/PreviewPanel/PreviewHolder"]
+[node name="PreviewViewport" type="SubViewport" parent="Root/Content/ContentScroll/ContentHBox/Right/PreviewPanel/PreviewHolder"]
 unique_name_in_owner = true
 disable_3d = true
 transparent_bg = true
@@ -134,17 +150,17 @@ handle_input_locally = false
 size = Vector2i(2, 2)
 render_target_update_mode = 4
 
-[node name="PreviewRoot" type="Node2D" parent="Root/Content/ContentHBox/Right/PreviewPanel/PreviewHolder/PreviewViewport"]
+[node name="PreviewRoot" type="Node2D" parent="Root/Content/ContentScroll/ContentHBox/Right/PreviewPanel/PreviewHolder/PreviewViewport"]
 unique_name_in_owner = true
 position = Vector2(190, 150)
 scale = Vector2(2, 2)
 
-[node name="InfoTitle" type="Label" parent="Root/Content/ContentHBox/Right"]
+[node name="InfoTitle" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Information"
 
-[node name="InfoLabel" type="RichTextLabel" parent="Root/Content/ContentHBox/Right"]
+[node name="InfoLabel" type="RichTextLabel" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -152,12 +168,12 @@ size_flags_vertical = 2
 bbcode_enabled = true
 autowrap_mode = 1
 
-[node name="PunnettTitle" type="Label" parent="Root/Content/ContentHBox/Right"]
+[node name="PunnettTitle" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Punnett Square"
 
-[node name="PunnettLabel" type="RichTextLabel" parent="Root/Content/ContentHBox/Right"]
+[node name="PunnettLabel" type="RichTextLabel" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -166,27 +182,27 @@ bbcode_enabled = true
 text = "Select two geckos to preview the Punnett square."
 autowrap_mode = 1
 
-[node name="ActionsRow" type="HBoxContainer" parent="Root/Content/ContentHBox/Right"]
+[node name="ActionsRow" type="HBoxContainer" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="BreedButton" type="Button" parent="Root/Content/ContentHBox/Right/ActionsRow"]
+[node name="BreedButton" type="Button" parent="Root/Content/ContentScroll/ContentHBox/Right/ActionsRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Breed"
 
-[node name="RenameButton" type="Button" parent="Root/Content/ContentHBox/Right/ActionsRow"]
+[node name="RenameButton" type="Button" parent="Root/Content/ContentScroll/ContentHBox/Right/ActionsRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Rename"
 
-[node name="DeleteButton" type="Button" parent="Root/Content/ContentHBox/Right/ActionsRow"]
+[node name="DeleteButton" type="Button" parent="Root/Content/ContentScroll/ContentHBox/Right/ActionsRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Delete"
 
-[node name="CloseButton" type="Button" parent="Root/Content/ContentHBox/Right/ActionsRow"]
+[node name="CloseButton" type="Button" parent="Root/Content/ContentScroll/ContentHBox/Right/ActionsRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Close"

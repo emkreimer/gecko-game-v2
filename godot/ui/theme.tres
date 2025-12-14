@@ -1,4 +1,6 @@
-[gd_resource type="Theme" load_steps=30 format=4 uid="uid://d22mpqutkotsu"]
+[gd_resource type="Theme" load_steps=31 format=4 uid="uid://d22mpqutkotsu"]
+
+[ext_resource type="FontFile" path="res://assets/fonts/BoldPixels.ttf" id="1_boldpixels"]
 
 [sub_resource type="Image" id="Image_5rkpn"]
 data = {
@@ -1604,6 +1606,8 @@ content_margin_right = 6.0
 content_margin_bottom = 4.0
 
 [resource]
+default_font = ExtResource("1_boldpixels")
+default_font_size = 16
 Button/colors/font_color = Color(0.875, 0.875, 0.875, 1)
 Button/colors/font_disabled_color = Color(0.875, 0.875, 0.875, 0.5)
 Button/colors/font_focus_color = Color(0.95, 0.95, 0.95, 1)
@@ -1620,7 +1624,7 @@ Button/colors/icon_pressed_color = Color(1, 1, 1, 1)
 Button/constants/h_separation = 2
 Button/constants/outline_size = 0
 Button/font_sizes/font_size = 16
-Button/fonts/font = SubResource("FontFile_cp4iw")
+Button/fonts/font = ExtResource("1_boldpixels")
 Button/styles/disabled = SubResource("StyleBoxFlat_yo7pd")
 Button/styles/focus = SubResource("StyleBoxFlat_6xrbm")
 Button/styles/hover = SubResource("StyleBoxFlat_p7kfi")
@@ -1637,7 +1641,7 @@ CheckButton/constants/check_v_offset = 0
 CheckButton/constants/h_separation = 4
 CheckButton/constants/outline_size = 0
 CheckButton/font_sizes/font_size = 16
-CheckButton/fonts/font = SubResource("FontFile_cp4iw")
+CheckButton/fonts/font = ExtResource("1_boldpixels")
 CheckButton/icons/checked = SubResource("ImageTexture_m5vsb")
 CheckButton/icons/checked_disabled = SubResource("ImageTexture_0cw5i")
 CheckButton/icons/checked_disabled_mirrored = SubResource("ImageTexture_2lrhe")
