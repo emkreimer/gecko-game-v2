@@ -11,17 +11,24 @@ const LOG_PREFIX := "[IngameController]"
 const SCENARIO_WILD := "wild"
 const SCENARIO_TERRARIUM := "terrarium"
 const STARTER_NAMES := ["Sunny", "Mango", "Pebble", "Nova", "Indie", "Zara", "Milo", "Roux"]
+const MENU_INFO := 1
+const MENU_RENAME := 2
+const MENU_BREED := 3
+const MENU_DELETE := 4
 
 @onready var gecko_container := %GeckoContainer
 @onready var dialogue_box: DialogueBox = %DialogueBox
 @onready var pause_overlay := %PauseOverlay
 @onready var fade_overlay := %FadeOverlay
-@onready var punnett_overlay := %PunnettOverlay
 @onready var info_label := %InfoLabel
 @onready var wild_background := %WildBackground
 @onready var terrarium_background := %TerrariumBackground
 @onready var explore_button := %ExploreButton
 @onready var scenario_label := %ScenarioLabel
+@onready var context_menu: PopupMenu = %GeckoContextMenu
+@onready var rename_dialog: AcceptDialog = %RenameDialog
+@onready var rename_line_edit: LineEdit = %RenameLineEdit
+@onready var delete_dialog: ConfirmationDialog = %DeleteDialog
 
 var _dialogue_system := DialogueSystem.new()
 var _selected: Array = []
@@ -32,6 +39,8 @@ var _intro_gecko: GeckoEntity
 var _spouse_gecko: GeckoEntity
 var _used_names := {}
 var _rng := RandomNumberGenerator.new()
+var _pending_punnett_entries: Array = []
+var _context_gecko: GeckoEntity
 
 func _ready() -> void:
 	randomize()
@@ -41,8 +50,15 @@ func _ready() -> void:
 	_dialogue_system.dialogue_started.connect(_on_dialogue_started)
 	_dialogue_system.dialogue_ended.connect(_on_dialogue_ended)
 	dialogue_box.advance_requested.connect(_advance_dialogue)
+	dialogue_box.punnett_closed.connect(_on_punnett_closed)
 	pause_overlay.game_exited.connect(_save_game)
 	explore_button.pressed.connect(_toggle_scenario)
+	context_menu.id_pressed.connect(_on_context_menu_id_pressed)
+	rename_dialog.confirmed.connect(_on_rename_confirmed)
+	rename_line_edit.text_submitted.connect(func(_text): _on_rename_confirmed())
+	delete_dialog.confirmed.connect(_on_delete_confirmed)
+	_ensure_context_menu_items()
+	context_menu.hide()
 	fade_overlay.visible = true
 	if SaveGame.has_save():
 		SaveGame.load_game(get_tree())
@@ -124,18 +140,58 @@ func _on_gecko_selected(gecko: GeckoEntity) -> void:
 			print(LOG_PREFIX, " selection ignored due to dialogue", active_topic)
 			return
 	print(LOG_PREFIX, " gecko clicked", gecko.gecko_name)
+	_context_gecko = gecko
+	_show_context_menu_at_mouse()
+
+func _ensure_context_menu_items() -> void:
+	if not context_menu:
+		return
+	context_menu.clear()
+	context_menu.add_item("See infos", MENU_INFO)
+	context_menu.add_item("Rename", MENU_RENAME)
+	context_menu.add_item("Breed", MENU_BREED)
+	context_menu.add_separator()
+	context_menu.add_item("Delete", MENU_DELETE)
+
+func _show_context_menu_at_mouse() -> void:
+	if not context_menu or not _context_gecko:
+		return
+	var mouse_position := get_viewport().get_mouse_position()
+	context_menu.position = mouse_position
+	context_menu.reset_size()
+	context_menu.popup()
+	context_menu.grab_focus()
+
+func _on_context_menu_id_pressed(id: int) -> void:
+	if not _context_gecko:
+		return
+	match id:
+		MENU_INFO:
+			_show_gecko_info(_context_gecko)
+		MENU_RENAME:
+			_open_rename_dialog(_context_gecko)
+		MENU_BREED:
+			_toggle_breed_selection(_context_gecko)
+		MENU_DELETE:
+			_open_delete_dialog(_context_gecko)
+
+func _show_gecko_info(gecko: GeckoEntity) -> void:
+	if not gecko:
+		return
+	_set_info_text(gecko.get_info_text(), true)
+
+func _toggle_breed_selection(gecko: GeckoEntity) -> void:
+	if not gecko:
+		return
 	if gecko in _selected:
 		_selected.erase(gecko)
 		gecko.set_selected(false)
 		print(LOG_PREFIX, " deselected", gecko.gecko_name, "remaining", _selected.size())
-		#if _selected.size() < 2:
-			#punnett_overlay.hide_overlay()
 		return
 	if _selected.size() >= 2:
 		for entry in _selected:
 			entry.set_selected(false)
 		_selected.clear()
-		#punnett_overlay.hide_overlay()
 		print(LOG_PREFIX, " selection reset - too many geckos")
 	_selected.append(gecko)
 	gecko.set_selected(true)
@@ -155,18 +211,73 @@ func _on_gecko_selected(gecko: GeckoEntity) -> void:
 		_show_punnett_square(_selected[0], _selected[1])
 		_dialogue_system.start_dialogue(_dialogue_system.get_dialogue("punnett"), "punnett")
 
+func _open_rename_dialog(gecko: GeckoEntity) -> void:
+	if not gecko or not rename_dialog or not rename_line_edit:
+		return
+	rename_line_edit.text = gecko.gecko_name
+	rename_line_edit.caret_column = gecko.gecko_name.length()
+	rename_line_edit.select_all()
+	rename_dialog.title = "Rename Gecko"
+	rename_dialog.popup_centered(Vector2(360, 140))
+	rename_line_edit.grab_focus()
+
+func _on_rename_confirmed() -> void:
+	if not _context_gecko or not rename_line_edit:
+		return
+	var new_name := rename_line_edit.text.strip_edges()
+	if new_name.is_empty():
+		_set_info_text("Name cannot be empty.", true)
+		rename_line_edit.grab_focus()
+		return
+	if _used_names.has(new_name) and new_name != _context_gecko.gecko_name:
+		_set_info_text("Name already used. Pick another.", true)
+		rename_line_edit.grab_focus()
+		rename_line_edit.select_all()
+		return
+	_used_names.erase(_context_gecko.gecko_name)
+	_used_names[new_name] = true
+	_context_gecko.set_gecko_name(new_name)
+	_set_info_text("Renamed to %s" % new_name, true)
+	rename_dialog.hide()
+
+func _open_delete_dialog(gecko: GeckoEntity) -> void:
+	if not gecko or not delete_dialog:
+		return
+	delete_dialog.dialog_text = "Delete %s?" % gecko.gecko_name
+	delete_dialog.popup_centered(Vector2(360, 160))
+
+func _on_delete_confirmed() -> void:
+	_delete_gecko(_context_gecko)
+
+func _delete_gecko(gecko: GeckoEntity) -> void:
+	if not gecko or not is_instance_valid(gecko):
+		return
+	if gecko in _selected:
+		_selected.erase(gecko)
+	gecko.set_selected(false)
+	if gecko == _intro_gecko:
+		_intro_gecko = null
+	if gecko == _spouse_gecko:
+		_spouse_gecko = null
+	_used_names.erase(gecko.gecko_name)
+	gecko.queue_free()
+	_pending_punnett_entries.clear()
+	dialogue_box.hide_punnett()
+	_set_info_text("Gecko deleted.", true)
+	_context_gecko = null
+
 func _on_dialogue_line(line: Dictionary) -> void:
 	dialogue_box.display_line(line)
 
 func _on_dialogue_started(_topic: String) -> void:
+	dialogue_box.hide_punnett()
 	_set_info_text(DIALOGUE_INFO_TEXT)
 	pause_overlay.visible = false
 
 func _on_dialogue_ended(topic: String) -> void:
 	dialogue_box.hide_dialogue()
 	if topic == "punnett":
-		#punnett_overlay.hide_overlay()
-		_hatch_selected_gecko()
+		_show_pending_punnett()
 	elif topic == "intro_primary":
 		_spawn_spouse_gecko()
 		if _intro_gecko and _spouse_gecko:
@@ -216,25 +327,38 @@ func _hatch_selected_gecko() -> void:
 			_set_info_text(DEFAULT_INFO_TEXT)
 		else:
 			_set_info_text("New hatchling is waiting in the terrarium. Switch scenes to meet them.")
-		#punnett_overlay.hide_overlay()
+		_pending_punnett_entries.clear()
 		return
 	print(LOG_PREFIX, " hatch failed - terrarium full")
 	for entry in _selected:
 		entry.set_selected(false)
 	_selected.clear()
-	#punnett_overlay.hide_overlay()
 	_set_info_text(TERRARIUM_FULL_TEXT)
+	_pending_punnett_entries.clear()
 
 func _show_punnett_square(parent_a: GeckoEntity, parent_b: GeckoEntity) -> void:
 	var data := GeneticsSystem.build_punnett_data(parent_a.genes, parent_b.genes)
 	print(LOG_PREFIX, " punnett data entries", data.size())
+	_pending_punnett_entries = data
 	if data.is_empty():
-		punnett_overlay.hide_overlay()
+		dialogue_box.hide_punnett()
 		return
-	punnett_overlay.show_punnett(data)
 
 func _on_gecko_hovered(_gecko: GeckoEntity, info: String) -> void:
-	_set_info_text(info if not info.is_empty() else DEFAULT_INFO_TEXT)
+	_set_info_text(info if not info.is_empty() else DEFAULT_INFO_TEXT, not info.is_empty())
+
+func _on_punnett_closed() -> void:
+	if _pending_punnett_entries.is_empty():
+		return
+	_hatch_selected_gecko()
+	_pending_punnett_entries.clear()
+
+func _show_pending_punnett() -> void:
+	if _pending_punnett_entries.is_empty():
+		_hatch_selected_gecko()
+		return
+	dialogue_box.show_punnett(_pending_punnett_entries)
+	_set_info_text("Review the Punnett square, then close to hatch.", true)
 
 func _attach_gecko_signals(gecko: GeckoEntity) -> void:
 	if not gecko.gecko_selected.is_connected(_on_gecko_selected):
@@ -253,8 +377,9 @@ func _wire_existing_geckos() -> void:
 			elif not _spouse_gecko and gecko.sex != _intro_gecko.sex:
 				_spouse_gecko = gecko
 
-func _set_info_text(text: String = DEFAULT_INFO_TEXT) -> void:
+func _set_info_text(text: String = DEFAULT_INFO_TEXT, show_box: bool = false) -> void:
 	info_label.text = text
+	info_label.visible = show_box and not text.is_empty()
 
 func _toggle_scenario() -> void:
 	var target := SCENARIO_TERRARIUM if _current_scenario == SCENARIO_WILD else SCENARIO_WILD

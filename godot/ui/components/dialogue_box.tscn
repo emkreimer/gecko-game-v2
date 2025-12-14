@@ -46,6 +46,40 @@ theme_override_colors/default_color = Color(0.96, 0.98, 1, 1)
 
 [node name="ContinueLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+[node name="PunnettWrapper" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+visible = false
+
+[node name="PunnettVBox" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PunnettWrapper"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_horizontal = 3
+
+[node name="PunnettScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer/PunnettWrapper/PunnettVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_horizontal = 3
+
+[node name="PunnettLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PunnettWrapper/PunnettVBox/PunnettScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = true
+scroll_following = false
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.96, 0.98, 1, 1)
+autowrap_mode = 1
+visible_characters = -1
+
+[node name="PunnettCloseButton" type="Button" parent="MarginContainer/VBoxContainer/PunnettWrapper/PunnettVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close"
+size_flags_horizontal = 4
 layout_mode = 2
 text = "▼ Press SPACE or CLICK"
 visible = false
@@ -55,5 +89,6 @@ theme_override_colors/font_color = Color(0.96, 0.98, 1, 1)
 unique_name_in_owner = true
 one_shot = false
 wait_time = 0.03
+[connection signal="pressed" from="MarginContainer/VBoxContainer/PunnettWrapper/PunnettVBox/PunnettCloseButton" to="." method="_on_punnett_close_pressed"]
 
 [connection signal="timeout" from="TypeTimer" to="." method="_on_type_timer_timeout"]

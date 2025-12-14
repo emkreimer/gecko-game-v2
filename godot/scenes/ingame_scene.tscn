@@ -1,13 +1,24 @@
-[gd_scene load_steps=9 format=3 uid="uid://cik30de5gaaah"]
+[gd_scene load_steps=10 format=3 uid="uid://cik30de5gaaah"]
 
 [ext_resource type="Script" uid="uid://dg0oyskx8up1s" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
 [ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
+[ext_resource type="Texture2D" uid="uid://dhlwh845mh6hc" path="res://assets/bg/wild_bg2 (1).jpg" id="2_vus8m"]
 [ext_resource type="PackedScene" uid="uid://bkk87o2ooo6at" path="res://ui/overlays/fade_overlay.tscn" id="3_2p62b"]
-[ext_resource type="Texture2D" uid="uid://ta80vaah4hh4" path="res://assets/bg/terrarium2.png" id="3_vus8m"]
+[ext_resource type="Texture2D" uid="uid://b0jjcasjtde2" path="res://assets/bg/terrarium.jpg" id="3_vus8m"]
 [ext_resource type="PackedScene" uid="uid://dvrxu6ntetf8m" path="res://ui/components/dialogue_box.tscn" id="4_0xw65"]
 [ext_resource type="Texture2D" uid="uid://dmelj2qgr8w7k" path="res://icon.svg" id="6_g6e5u"]
-[ext_resource type="Texture2D" uid="uid://cmo5unq3usp5l" path="res://assets/bg/wild_bg.png" id="7_wildb"]
 [ext_resource type="PackedScene" uid="uid://5q503rd02og7" path="res://ui/overlays/punnett_overlay.tscn" id="8_pnnet"]
+
+[sub_resource type="StyleBoxFlat" id="StyleInfoBox"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0, 0, 0, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="IngameScene" type="Node2D"]
 script = ExtResource("1_xbft2")
@@ -18,14 +29,14 @@ visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -74.0
-offset_top = -318.0
-offset_right = 773.0
-offset_bottom = 327.0
+offset_left = -4.0
+offset_top = -47.0
+offset_right = 583.0
+offset_bottom = 374.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_stretch_ratio = 6.0
-texture = ExtResource("7_wildb")
+texture = ExtResource("2_vus8m")
 expand_mode = 1
 
 [node name="TerrariumBackground" type="TextureRect" parent="."]
@@ -36,7 +47,7 @@ anchor_bottom = 1.0
 offset_left = 2.0
 offset_top = 3.0
 offset_right = 581.0
-offset_bottom = 409.0
+offset_bottom = 378.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_stretch_ratio = 6.0
@@ -44,6 +55,7 @@ texture = ExtResource("3_vus8m")
 expand_mode = 1
 
 [node name="Decor" type="Sprite2D" parent="."]
+visible = false
 modulate = Color(1, 1, 1, 0.05)
 position = Vector2(960, 540)
 scale = Vector2(6, 6)
@@ -53,13 +65,16 @@ texture = ExtResource("6_g6e5u")
 unique_name_in_owner = true
 offset_left = 30.0
 offset_top = 80.0
-offset_right = 420.0
+offset_right = 305.0
 offset_bottom = 250.0
 mouse_filter = 1
+theme_override_colors/default_color = Color(1, 1, 1, 0.95)
+theme_override_styles/normal = SubResource("StyleInfoBox")
 scroll_active = false
 
 [node name="GeckoContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
+scale = Vector2(0.3, 0.3)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -105,3 +120,21 @@ visible = false
 
 [node name="PunnettOverlay" parent="UI" instance=ExtResource("8_pnnet")]
 unique_name_in_owner = true
+
+[node name="GeckoContextMenu" type="PopupMenu" parent="UI"]
+unique_name_in_owner = true
+
+[node name="RenameDialog" type="AcceptDialog" parent="UI"]
+unique_name_in_owner = true
+title = "Rename Gecko"
+
+[node name="RenameLineEdit" type="LineEdit" parent="UI/RenameDialog"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 32.0
+offset_right = 320.0
+offset_bottom = 64.0
+
+[node name="DeleteDialog" type="ConfirmationDialog" parent="UI"]
+unique_name_in_owner = true
+title = "Delete Gecko"

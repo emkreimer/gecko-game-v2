@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://0qvgj6wuh5wq"]
 
-[ext_resource type="Script" path="res://scripts/gecko.gd" id="1_v0gus"]
-[ext_resource type="Texture2D" uid="uid://dxetvrsympjhf" path="res://assets/sprites/gecko/gecko_base_spritesheet.png" id="2_yxl8w"]
-[ext_resource type="Texture2D" uid="uid://dwawn2lpmfr4j" path="res://assets/sprites/gecko/gecko_eye_spritesheet.png" id="3_el9oh"]
-[ext_resource type="Texture2D" uid="uid://cx5ul4b5o53h" path="res://assets/sprites/gecko/gecko_tail_spritesheet.png" id="4_0ar0a"]
-[ext_resource type="Texture2D" uid="uid://d1h5rhorkdfyy" path="res://assets/sprites/gecko/gecko_spots_spritesheet.png" id="5_7k7td"]
+[ext_resource type="Script" uid="uid://bsstsnmu65nh" path="res://scripts/gecko.gd" id="1_v0gus"]
+[ext_resource type="Texture2D" uid="uid://dxetvrsympjhf" path="res://scenes/gecko_base_spritesheet.png" id="2_yxl8w"]
+[ext_resource type="Texture2D" uid="uid://dwawn2lpmfr4j" path="res://scenes/gecko_eye_spritesheet.png" id="3_el9oh"]
+[ext_resource type="Texture2D" uid="uid://cx5ul4b5o53h" path="res://scenes/gecko_tail_spritesheet.png" id="4_0ar0a"]
+[ext_resource type="Texture2D" uid="uid://d1h5rhorkdfyy" path="res://scenes/gecko_spots_spritesheet.png" id="5_7k7td"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w66pg"]
 size = Vector2(140, 90)
@@ -14,6 +14,7 @@ script = ExtResource("1_v0gus")
 
 [node name="CompositeSprite" type="Node2D" parent="."]
 unique_name_in_owner = true
+scale = Vector2(0.3, 0.3)
 
 [node name="Body" type="Sprite2D" parent="CompositeSprite"]
 unique_name_in_owner = true
@@ -37,10 +38,11 @@ hframes = 4
 
 [node name="NameLabel" type="Label" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, -60)
-horizontal_alignment = 1
+offset_top = -60.0
+offset_bottom = -60.0
 size_flags_horizontal = 4
 text = "Gecko"
+horizontal_alignment = 1
 
 [node name="AnimationTimer" type="Timer" parent="."]
 unique_name_in_owner = true
@@ -49,9 +51,6 @@ autostart = true
 
 [node name="ClickArea" type="Area2D" parent="."]
 unique_name_in_owner = true
-input_pickable = true
-collision_layer = 1
-collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
 shape = SubResource("RectangleShape2D_w66pg")

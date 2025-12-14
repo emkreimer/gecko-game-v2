@@ -60,6 +60,13 @@ func initialize(p_genes: Dictionary, p_name: String, p_generation: int, p_parent
 		genes[trait_key].configure(gene.trait_key, gene.trait_data, gene.allele1, gene.allele2)
 	_update_from_genes()
 
+
+# Rename helper avoids clobbering Node.set_name
+func set_gecko_name(new_name: String) -> void:
+	gecko_name = new_name
+	_info_cache = ""
+	_update_name_label()
+
 func set_selected(selected: bool) -> void:
 	_selected = selected
 	composite.modulate = Color(1.3, 1.3, 0.95, 1) if selected else Color(1, 1, 1, 1)
