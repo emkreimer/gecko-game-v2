@@ -1,14 +1,22 @@
-[gd_scene load_steps=4 format=3 uid="uid://dvrxu6ntetf8m"]
+[gd_scene load_steps=3 format=3 uid="uid://dvrxu6ntetf8m"]
 
 [ext_resource type="Script" uid="uid://bm4t36kyqcx2x" path="res://ui/components/dialogue_box.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu.png" id="2"]
 
-[sub_resource type="StyleBoxTexture" id="StyleDialogue"]
-texture = ExtResource("2")
-margin_left = 16.0
-margin_right = 16.0
-margin_top = 16.0
-margin_bottom = 16.0
+[sub_resource type="StyleBoxFlat" id="StyleDialogue"]
+bg_color = Color(0.1, 0.1, 0.1, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.5, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
 
 [node name="DialogueBox" type="PanelContainer"]
 anchors_preset = -1

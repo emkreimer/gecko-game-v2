@@ -12,8 +12,7 @@ const BREEDING_EXPLANATION := [
 ]
 
 const PUNNETT_SQUARE_EXPLANATION := [
-	{"speaker": "", "text": "Nice pairing! Let's review their Punnett square to see the possible allele mixes."},
-	{"speaker": "", "text": "After the explanation finishes we will hatch the baby and add it to your terrarium."}
+	{"speaker": "", "text": "Nice pairing! Let's review their Punnett square to see the possible allele mixes."}
 ]
 
 var _active_topic := ""
@@ -69,7 +68,7 @@ func build_spouse_intro(guide_name: String, spouse_name: String) -> Array:
 
 func build_breeding_prompt(guide_name: String, spouse_name: String) -> Array:
 	return [
-		{"speaker": guide_name, "text": "Try selecting me and %s. You'll see our Punnett square and hatch a baby in the terrarium." % spouse_name},
+		{"speaker": guide_name, "text": "Open the menu and try selecting me and %s. You'll see our Punnett square and hatch a baby in the terrarium." % spouse_name},
 		{"speaker": spouse_name, "text": "Remember: you need one male and one female to breed. Switch scenes any time from the Menu button > Change Scenario."}
 	]
 

@@ -29,6 +29,7 @@ const STARTER_NAMES := ["Sunny", "Mango", "Pebble", "Nova", "Indie", "Zara", "Mi
 @onready var delete_dialog: ConfirmationDialog = %DeleteDialog
 @onready var terrarium_spawn_points := %TerrariumSpawnPoints
 @onready var wild_spawn_points := %WildSpawnPoints
+@onready var punnett_overlay: PunnettOverlay = %PunnettOverlay
 
 var _dialogue_system := DialogueSystem.new()
 var _selected: Array = []
@@ -58,6 +59,8 @@ func _ready() -> void:
 	if inventory_overlay:
 		inventory_overlay.breed_requested.connect(_on_inventory_breed_requested)
 		inventory_overlay.delete_requested.connect(_on_inventory_delete_requested)
+	if punnett_overlay:
+		punnett_overlay.close_button.pressed.connect(_on_punnett_overlay_closed)
 		inventory_overlay.rename_requested.connect(_on_inventory_rename_requested)
 		inventory_overlay.closed.connect(_on_inventory_closed)
 	rename_dialog.confirmed.connect(_on_rename_confirmed)
@@ -78,9 +81,10 @@ func _ready() -> void:
 func _spawn_intro_gecko() -> void:
 	if _intro_gecko:
 		return
+	var diverse_genes := GeneticsSystem.create_diverse_starting_pair()
 	var gecko_name := _pick_unique_name()
 	var sex := _random_sex()
-	_intro_gecko = _spawn_gecko(GeneticsSystem.create_random_genes(), gecko_name, 1, [], sex, SCENARIO_WILD)
+	_intro_gecko = _spawn_gecko(diverse_genes[0], gecko_name, 1, [], sex, SCENARIO_WILD)
 	if _intro_gecko:
 		print(LOG_PREFIX, " intro guide spawned", _intro_gecko.gecko_name, "sex", _intro_gecko.sex)
 
@@ -89,9 +93,10 @@ func _spawn_spouse_gecko() -> void:
 		return
 	if _spouse_gecko:
 		return
+	var diverse_genes := GeneticsSystem.create_diverse_starting_pair()
 	var gecko_name := _pick_unique_name()
 	var sex := _opposite_sex(_intro_gecko.sex)
-	_spouse_gecko = _spawn_gecko(GeneticsSystem.create_random_genes(), gecko_name, 1, [], sex, SCENARIO_WILD)
+	_spouse_gecko = _spawn_gecko(diverse_genes[1], gecko_name, 1, [], sex, SCENARIO_WILD)
 	if _spouse_gecko:
 		print(LOG_PREFIX, " spouse spawned", _spouse_gecko.gecko_name, "sex", _spouse_gecko.sex)
 
@@ -377,12 +382,20 @@ func _on_punnett_closed() -> void:
 	_hatch_selected_gecko()
 	_pending_punnett_entries.clear()
 
+func _on_punnett_overlay_closed() -> void:
+	if _pending_punnett_entries.is_empty():
+		return
+	_hatch_selected_gecko()
+	_pending_punnett_entries.clear()
+	punnett_overlay.hide_overlay()
+
 func _show_pending_punnett() -> void:
 	if _pending_punnett_entries.is_empty():
 		_hatch_selected_gecko()
 		return
-	dialogue_box.show_punnett(_pending_punnett_entries)
-	_set_info_text("Review the Punnett square, then close to hatch.", true)
+	if punnett_overlay:
+		punnett_overlay.show_punnett(_pending_punnett_entries)
+		_set_info_text("Review the Punnett square, then close to hatch.", true)
 
 func _attach_gecko_signals(gecko: GeckoEntity) -> void:
 	if not gecko.gecko_selected.is_connected(_on_gecko_selected):

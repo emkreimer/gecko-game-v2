@@ -5,11 +5,12 @@ const TRAITS := {
 	"color": {
 		"gene_name": "Body Color",
 		"alleles": {
+			"B": {"name": "Midnight Black", "dominant": false, "color": Color(0.1, 0.1, 0.1), "description": "Black hide."},
 			"R": {"name": "Ruby Red", "dominant": true, "color": Color(0.91, 0.32, 0.32), "description": "Ruby hide."},
 			"O": {"name": "Sunset Orange", "dominant": true, "color": Color(0.99, 0.55, 0.21), "description": "Orange hide."},
 			"y": {"name": "Lemon Yellow", "dominant": false, "color": Color(0.99, 0.91, 0.37), "description": "Lemon hide."},
-			"w": {"name": "White", "dominant": false, "color": Color(200, 200, 200), "description": "White hide."},
-			"B": {"name": "Midnight Black", "dominant": false, "color": Color(0.1, 0.1, 0.1), "description": "Black hide."}
+			"w": {"name": "White", "dominant": false, "color": Color(1, 1, 1), "description": "White hide."},
+			"p": {"name": "Pale Pink", "dominant": false, "color": Color(1.0, 0.75, 0.8), "description": "Pale pink hide."}
 		}
 	},
 	"eye_color": {
@@ -17,7 +18,8 @@ const TRAITS := {
 		"alleles": {
 			"G": {"name": "Emerald", "dominant": true, "color": Color(0.3, 0.78, 0.43), "description": "Bright emerald eyes."},
 			"B": {"name": "Cobalt", "dominant": true, "color": Color(0.24, 0.48, 0.93), "description": "Cool cobalt eyes."},
-			"g": {"name": "Hazel", "dominant": false, "color": Color(0.59, 0.44, 0.18), "description": "Mellow hazel eyes."}
+			"g": {"name": "Hazel", "dominant": false, "color": Color(0.59, 0.44, 0.18), "description": "Mellow hazel eyes."},
+			"y": {"name": "Yellow", "dominant": false, "color": Color(0.91, 0.65, 0.26), "description": "Warm yellow eyes."}
 		}
 	},
 	"pattern": {
@@ -64,6 +66,31 @@ static func create_random_genes() -> Dictionary:
 	for trait_key in TRAITS.keys():
 		genes[trait_key] = create_random_gene(trait_key, rng)
 	return genes
+
+static func create_diverse_starting_pair() -> Array:
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	
+	var color_alleles: Array = TRAITS["color"]["alleles"].keys()
+	color_alleles.shuffle()
+	
+	var genes_a := {}
+	for trait_key in TRAITS.keys():
+		if trait_key == "color":
+			genes_a[trait_key] = create_gene(trait_key, color_alleles[0], color_alleles[1])
+		else:
+			genes_a[trait_key] = create_random_gene(trait_key, rng)
+	
+	var genes_b := {}
+	for trait_key in TRAITS.keys():
+		if trait_key == "color":
+			var idx_a := 2 if color_alleles.size() > 2 else 0
+			var idx_b := 3 if color_alleles.size() > 3 else 1
+			genes_b[trait_key] = create_gene(trait_key, color_alleles[idx_a], color_alleles[idx_b])
+		else:
+			genes_b[trait_key] = create_random_gene(trait_key, rng)
+	
+	return [genes_a, genes_b]
 
 static func breed(parent_a: Dictionary, parent_b: Dictionary) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
