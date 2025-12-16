@@ -27,6 +27,8 @@ const STARTER_NAMES := ["Sunny", "Mango", "Pebble", "Nova", "Indie", "Zara", "Mi
 @onready var rename_dialog: AcceptDialog = %RenameDialog
 @onready var rename_line_edit: LineEdit = %RenameLineEdit
 @onready var delete_dialog: ConfirmationDialog = %DeleteDialog
+@onready var terrarium_spawn_points := %TerrariumSpawnPoints
+@onready var wild_spawn_points := %WildSpawnPoints
 
 var _dialogue_system := DialogueSystem.new()
 var _selected: Array = []
@@ -108,6 +110,47 @@ func _spawn_gecko(genes: Dictionary, gecko_name: String, generation: int, parent
 	return gecko
 
 func _get_spawn_position(habitat: String) -> Vector2:
+	var spawn_points_parent := terrarium_spawn_points if habitat == SCENARIO_TERRARIUM else wild_spawn_points
+	
+	if not spawn_points_parent:
+		print(LOG_PREFIX, " ERROR: spawn points parent not found for habitat: ", habitat)
+		print(LOG_PREFIX, " terrarium_spawn_points: ", terrarium_spawn_points)
+		print(LOG_PREFIX, " wild_spawn_points: ", wild_spawn_points)
+		return _get_random_spawn_position()
+	
+	var available_points: Array[Marker2D] = []
+	for child in spawn_points_parent.get_children():
+		if child is Marker2D:
+			available_points.append(child)
+	
+	if available_points.is_empty():
+		print(LOG_PREFIX, " no spawn points available, using fallback")
+		return _get_random_spawn_position()
+	
+	# find occupied spawn points
+	var occupied_positions: Array[Vector2] = []
+	for gecko in gecko_container.get_children():
+		if gecko is GeckoEntity and gecko.habitat == habitat:
+			occupied_positions.append(gecko.position)
+	
+	# find an unoccupied spawn point
+	available_points.shuffle()
+	for spawn_point in available_points:
+		var is_occupied := false
+		# convert spawn point (from world position to gecko_container local space
+		var local_pos: Vector2 = gecko_container.to_local(spawn_point.global_position)
+		for occupied_pos in occupied_positions:
+			if local_pos.distance_to(occupied_pos) < MIN_GECKO_DISTANCE:
+				is_occupied = true
+				break
+		if not is_occupied:
+			return local_pos
+	
+	print(LOG_PREFIX, " all spawn points occupied, reusing point")
+	return gecko_container.to_local(available_points[0].global_position)
+
+
+func _get_random_spawn_position() -> Vector2:
 	var viewport_size := get_viewport_rect().size
 	if viewport_size == Vector2.ZERO:
 		viewport_size = get_viewport().get_visible_rect().size
@@ -125,14 +168,14 @@ func _get_spawn_position(habitat: String) -> Vector2:
 			randf_range(min_bound.x, max_bound.x),
 			randf_range(min_bound.y, max_bound.y)
 		)
-		if _is_spawn_position_valid(candidate, habitat):
+		if _is_spawn_position_valid(candidate):
 			return candidate
 	return fallback
 
 
-func _is_spawn_position_valid(spawn_position: Vector2, habitat: String) -> bool:
+func _is_spawn_position_valid(spawn_position: Vector2) -> bool:
 	for child in gecko_container.get_children():
-		if child is GeckoEntity and child.habitat == habitat and child.position.distance_to(spawn_position) < MIN_GECKO_DISTANCE:
+		if child is GeckoEntity and child.position.distance_to(spawn_position) < MIN_GECKO_DISTANCE:
 			return false
 	return true
 

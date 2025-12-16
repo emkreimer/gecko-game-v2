@@ -30,7 +30,6 @@ script = ExtResource("1_xbft2")
 
 [node name="WildBackground" type="TextureRect" parent="."]
 unique_name_in_owner = true
-visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -46,6 +45,7 @@ expand_mode = 1
 
 [node name="TerrariumBackground" type="TextureRect" parent="."]
 unique_name_in_owner = true
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -60,7 +60,6 @@ texture = ExtResource("3_vus8m")
 expand_mode = 1
 
 [node name="Decor" type="Sprite2D" parent="."]
-visible = false
 modulate = Color(1, 1, 1, 0.05)
 position = Vector2(960, 540)
 scale = Vector2(6, 6)
@@ -80,6 +79,61 @@ scroll_active = false
 [node name="GeckoContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
 scale = Vector2(0.3, 0.3)
+
+[node name="TerrariumSpawnPoints" type="Node2D" parent="."]
+unique_name_in_owner = true
+visible = false
+
+[node name="SpawnPoint1" type="Marker2D" parent="TerrariumSpawnPoints"]
+position = Vector2(80, 236)
+
+[node name="SpawnPoint2" type="Marker2D" parent="TerrariumSpawnPoints"]
+position = Vector2(301, 171)
+
+[node name="SpawnPoint3" type="Marker2D" parent="TerrariumSpawnPoints"]
+position = Vector2(331, 224)
+
+[node name="SpawnPoint4" type="Marker2D" parent="TerrariumSpawnPoints"]
+position = Vector2(233, 279)
+
+[node name="SpawnPoint5" type="Marker2D" parent="TerrariumSpawnPoints"]
+position = Vector2(309, 298)
+
+[node name="SpawnPoint6" type="Marker2D" parent="TerrariumSpawnPoints"]
+position = Vector2(117, 139)
+
+[node name="SpawnPoint7" type="Marker2D" parent="TerrariumSpawnPoints"]
+position = Vector2(124, 205)
+
+[node name="SpawnPoint8" type="Marker2D" parent="TerrariumSpawnPoints"]
+position = Vector2(502, 299)
+
+[node name="WildSpawnPoints" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="SpawnPoint1" type="Marker2D" parent="WildSpawnPoints"]
+position = Vector2(180, 250)
+
+[node name="SpawnPoint2" type="Marker2D" parent="WildSpawnPoints"]
+position = Vector2(450, 200)
+
+[node name="SpawnPoint3" type="Marker2D" parent="WildSpawnPoints"]
+position = Vector2(63, 244)
+
+[node name="SpawnPoint4" type="Marker2D" parent="WildSpawnPoints"]
+position = Vector2(314, 236)
+
+[node name="SpawnPoint5" type="Marker2D" parent="WildSpawnPoints"]
+position = Vector2(128, 210)
+
+[node name="SpawnPoint6" type="Marker2D" parent="WildSpawnPoints"]
+position = Vector2(414, 193)
+
+[node name="SpawnPoint7" type="Marker2D" parent="WildSpawnPoints"]
+position = Vector2(420, 164)
+
+[node name="SpawnPoint8" type="Marker2D" parent="WildSpawnPoints"]
+position = Vector2(246, 187)
 
 [node name="UI" type="CanvasLayer" parent="."]
 unique_name_in_owner = true
@@ -111,6 +165,7 @@ text = "Menu"
 unique_name_in_owner = true
 oversampling_override = 1.0
 size = Vector2i(132, 100)
+visible = true
 theme_override_styles/panel = SubResource("StyleMenu")
 
 [node name="ActionsVBox" type="VBoxContainer" parent="UI/ActionsMenu"]
@@ -145,6 +200,7 @@ visible = false
 
 [node name="InventoryOverlay" parent="UI" instance=ExtResource("10_inv")]
 unique_name_in_owner = true
+visible = false
 
 [node name="RenameDialog" type="AcceptDialog" parent="UI"]
 unique_name_in_owner = true
@@ -156,7 +212,7 @@ unique_name_in_owner = true
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 92.0
-offset_bottom = 51.0
+offset_bottom = 58.0
 
 [node name="DeleteDialog" type="ConfirmationDialog" parent="UI"]
 unique_name_in_owner = true
