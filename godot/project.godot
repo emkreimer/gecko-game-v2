@@ -13,7 +13,6 @@ config_version=5
 config/name="MyGame"
 run/main_scene="res://scenes/boot/godot/godot_bootsplash_scene.tscn"
 config/features=PackedStringArray("4.5")
-config/icon="res://icon.svg"
 
 [autoload]
 

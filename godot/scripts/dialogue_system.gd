@@ -12,7 +12,8 @@ const BREEDING_EXPLANATION := [
 ]
 
 const PUNNETT_SQUARE_EXPLANATION := [
-	{"speaker": "", "text": "Nice pairing! Let's review their Punnett square to see the possible allele mixes."}
+	{"speaker": "", "text": "Nice pairing! Let's review their Punnett square to see the possible allele mixes."},
+	{"speaker": "", "text": "Now let's hatch the baby and add it to your terrarium!"}
 ]
 
 var _active_topic := ""
