@@ -7,7 +7,9 @@ const TRAITS := {
 		"alleles": {
 			"R": {"name": "Ruby Red", "dominant": true, "color": Color(0.91, 0.32, 0.32), "description": "Ruby hide."},
 			"O": {"name": "Sunset Orange", "dominant": true, "color": Color(0.99, 0.55, 0.21), "description": "Orange hide."},
-			"y": {"name": "Lemon Yellow", "dominant": false, "color": Color(0.99, 0.91, 0.37), "description": "Lemon hide."}
+			"y": {"name": "Lemon Yellow", "dominant": false, "color": Color(0.99, 0.91, 0.37), "description": "Lemon hide."},
+			"w": {"name": "White", "dominant": false, "color": Color(200, 200, 200), "description": "White hide."},
+			"B": {"name": "Midnight Black", "dominant": false, "color": Color(0.1, 0.1, 0.1), "description": "Black hide."}
 		}
 	},
 	"eye_color": {
