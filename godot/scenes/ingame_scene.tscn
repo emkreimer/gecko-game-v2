@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cik30de5gaaah"]
+[gd_scene load_steps=14 format=3 uid="uid://cik30de5gaaah"]
 
 [ext_resource type="Script" uid="uid://dg0oyskx8up1s" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
 [ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://5q503rd02og7" path="res://ui/overlays/punnett_overlay.tscn" id="8_pnnet"]
 [ext_resource type="Texture2D" uid="uid://mtguh6qvqvwa" path="res://assets/ui/menu.png" id="9_menu"]
 [ext_resource type="PackedScene" uid="uid://p3lltlvkxnfw" path="res://ui/overlays/inventory_overlay.tscn" id="10_inv"]
+[ext_resource type="PackedScene" path="res://ui/components/dice_roll.tscn" id="11_dice"]
 
 [sub_resource type="StyleBoxTexture" id="StyleMenu"]
 texture = ExtResource("9_menu")
@@ -142,12 +143,12 @@ text = "Menu"
 [node name="ActionsMenu" type="PopupPanel" parent="UI"]
 unique_name_in_owner = true
 oversampling_override = 1.0
-size = Vector2i(132, 100)
+size = Vector2i(133, 100)
 visible = true
 theme_override_styles/panel = SubResource("StyleMenu")
 
 [node name="ActionsVBox" type="VBoxContainer" parent="UI/ActionsMenu"]
-offset_right = 132.0
+offset_right = 133.0
 offset_bottom = 100.0
 size_flags_horizontal = 3
 
@@ -155,13 +156,19 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Go to Terrarium"
+text = "Terrarium"
 
 [node name="OpenInventoryButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Open Inventory"
+
+[node name="SearchGeckosButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Search for Geckos"
 
 [node name="PauseOverlay" parent="UI" instance=ExtResource("2_1l4sl")]
 unique_name_in_owner = true
@@ -178,6 +185,9 @@ visible = false
 
 [node name="InventoryOverlay" parent="UI" instance=ExtResource("10_inv")]
 unique_name_in_owner = true
+visible = false
+
+[node name="DiceRoll" parent="UI" instance=ExtResource("11_dice")]
 visible = false
 
 [node name="RenameDialog" type="AcceptDialog" parent="UI"]

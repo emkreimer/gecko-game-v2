@@ -27,7 +27,9 @@ const STARTER_NAMES := ["Asu", "Ai", "Aikawa", "Aitake", "Asuka", "Beelzebub",
 @onready var actions_menu: PopupPanel = %ActionsMenu
 @onready var change_scenario_button: Button = %ChangeScenarioButton
 @onready var open_inventory_button: Button = %OpenInventoryButton
+@onready var search_geckos_button: Button = %SearchGeckosButton
 @onready var inventory_overlay: InventoryOverlay = %InventoryOverlay
+@onready var dice_roll: Control = %DiceRoll
 @onready var rename_dialog: AcceptDialog = %RenameDialog
 @onready var rename_line_edit: LineEdit = %RenameLineEdit
 @onready var delete_dialog: ConfirmationDialog = %DeleteDialog
@@ -60,6 +62,9 @@ func _ready() -> void:
 	actions_button.pressed.connect(_on_actions_button_pressed)
 	change_scenario_button.pressed.connect(_on_change_scenario_pressed)
 	open_inventory_button.pressed.connect(_on_open_inventory_pressed)
+	search_geckos_button.pressed.connect(_on_search_geckos_pressed)
+	if dice_roll:
+		dice_roll.roll_completed.connect(_on_dice_roll_completed)
 	if inventory_overlay:
 		inventory_overlay.breed_requested.connect(_on_inventory_breed_requested)
 		inventory_overlay.delete_requested.connect(_on_inventory_delete_requested)
@@ -426,6 +431,19 @@ func _on_open_inventory_pressed() -> void:
 	actions_menu.hide()
 	_show_inventory_overlay()
 
+func _on_search_geckos_pressed() -> void:
+	actions_menu.hide()
+	if _current_scenario != SCENARIO_WILD:
+		print(LOG_PREFIX, " search only available in wild")
+		return
+	if dice_roll:
+		dice_roll.show_dice_roll()
+
+func _on_dice_roll_completed(success: bool) -> void:
+	print(LOG_PREFIX, " dice roll completed, success:", success)
+	if success:
+		_spawn_wild_extra(1)
+
 func _show_inventory_overlay() -> void:
 	if not inventory_overlay:
 		return
@@ -483,6 +501,9 @@ func _update_change_scenario_button() -> void:
 		change_scenario_button.text = "Go to Terrarium"
 	else:
 		change_scenario_button.text = "Explore Wild"
+	
+	if search_geckos_button:
+		search_geckos_button.visible = _current_scenario == SCENARIO_WILD
 
 func _apply_scene_visibility() -> void:
 	for gecko in gecko_container.get_children():

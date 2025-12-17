@@ -5,12 +5,13 @@ const TRAITS := {
 	"color": {
 		"gene_name": "Body Color",
 		"alleles": {
-			"B": {"name": "Midnight Black", "dominant": false, "color": Color(0.1, 0.1, 0.1), "description": "Black hide."},
+			"B": {"name": "Midnight Black", "dominant": true, "color": Color(0.1, 0.1, 0.1), "description": "Black hide."},
 			"R": {"name": "Ruby Red", "dominant": true, "color": Color(0.91, 0.32, 0.32), "description": "Ruby hide."},
 			"O": {"name": "Sunset Orange", "dominant": true, "color": Color(0.99, 0.55, 0.21), "description": "Orange hide."},
 			"y": {"name": "Lemon Yellow", "dominant": false, "color": Color(0.99, 0.91, 0.37), "description": "Lemon hide."},
 			"w": {"name": "White", "dominant": false, "color": Color(1, 1, 1), "description": "White hide."},
-			"p": {"name": "Pale Pink", "dominant": false, "color": Color(1.0, 0.75, 0.8), "description": "Pale pink hide."}
+			"p": {"name": "Pale Pink", "dominant": false, "color": Color(1.0, 0.75, 0.8), "description": "Pale pink hide."},
+			"b": {"name": "Brown", "dominant": false, "color": Color(0.55, 0.27, 0.07), "description": "Brown hide."}
 		}
 	},
 	"eye_color": {
