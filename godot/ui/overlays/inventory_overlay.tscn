@@ -130,31 +130,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PreviewPanel" type="Panel" parent="Root/Content/ContentScroll/ContentHBox/Right"]
-custom_minimum_size = Vector2(340, 200)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 2
-
-[node name="PreviewHolder" type="SubViewportContainer" parent="Root/Content/ContentScroll/ContentHBox/Right/PreviewPanel"]
-layout_mode = 0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-stretch = true
-
-[node name="PreviewViewport" type="SubViewport" parent="Root/Content/ContentScroll/ContentHBox/Right/PreviewPanel/PreviewHolder"]
-unique_name_in_owner = true
-disable_3d = true
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(2, 2)
-render_target_update_mode = 4
-
-[node name="PreviewRoot" type="Node2D" parent="Root/Content/ContentScroll/ContentHBox/Right/PreviewPanel/PreviewHolder/PreviewViewport"]
-unique_name_in_owner = true
-position = Vector2(190, 150)
-scale = Vector2(2, 2)
-
 [node name="InfoTitle" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Right"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -176,23 +151,11 @@ offset_left = 8.0
 offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true
-autowrap_mode = 1
-
-[node name="PunnettTitle" type="Label" parent="Root/Content/ContentScroll/ContentHBox/Right"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Punnett Square"
-
-[node name="PunnettLabel" type="RichTextLabel" parent="Root/Content/ContentScroll/ContentHBox/Right"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 2
-bbcode_enabled = true
-text = "Select two geckos to preview the Punnett square."
 autowrap_mode = 1
 
 [node name="ActionsRow" type="HBoxContainer" parent="Root/Content/ContentScroll/ContentHBox/Right"]
@@ -219,3 +182,12 @@ text = "Delete"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Close"
+
+[node name="PunnettLabel" type="RichTextLabel" parent="Root/Content/ContentScroll/ContentHBox/Right"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 2
+bbcode_enabled = true
+text = "Select two geckos to preview the Punnett square."
+autowrap_mode = 1

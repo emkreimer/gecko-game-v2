@@ -24,7 +24,6 @@ const GeneticsSystem = preload("res://scripts/genetics_system.gd")
 @onready var rename_button: Button = %RenameButton
 @onready var delete_button: Button = %DeleteButton
 @onready var close_button: Button = %CloseButton
-@onready var preview_root: Node2D = %PreviewRoot
 
 var _geckos: Array = []
 var _selected: GeckoEntity
@@ -170,7 +169,6 @@ func _update_preview() -> void:
 	if not _selected or not gecko_scene:
 		return
 	_preview_instance = gecko_scene.instantiate()
-	preview_root.add_child(_preview_instance)
 	_preview_instance.initialize(_selected.genes, _selected.gecko_name, _selected.generation, _selected.parents, _selected.sex, _selected.habitat)
 	_preview_instance.set_selected(false)
 

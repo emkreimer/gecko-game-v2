@@ -10,13 +10,17 @@ const MAX_SPAWN_ATTEMPTS := 20
 const LOG_PREFIX := "[IngameController]"
 const SCENARIO_WILD := "wild"
 const SCENARIO_TERRARIUM := "terrarium"
-const STARTER_NAMES := ["Sunny", "Mango", "Pebble", "Nova", "Indie", "Zara", "Milo", "Roux"]
+const STARTER_NAMES := ["Asu", "Ai", "Aikawa", "Aitake", "Asuka", "Beelzebub", 
+"Chidaruma", "Dokuga", "Duston", "Ebisu", "En", "Fujita",
+"Fukuyama", "Fuu", "Haru", "Hiratsuka", "Hole", "Johnson",
+"Kai", "Kaiman", "Kasukabe", "Kento", "Kikurage", "Maki",
+"Matsumura", "Natsuki", "Nikaido", "Noi", "Risu", "Shin",
+"Shinta", "Shou", "Tanabe", "Tetsujo", "Turkey", "Yasaka"]
 
 @onready var gecko_container := %GeckoContainer
 @onready var dialogue_box: DialogueBox = %DialogueBox
 @onready var pause_overlay := %PauseOverlay
 @onready var fade_overlay := %FadeOverlay
-@onready var info_label := %InfoLabel
 @onready var wild_background := %WildBackground
 @onready var terrarium_background := %TerrariumBackground
 @onready var actions_button: Button = %ActionsButton
@@ -62,7 +66,6 @@ func _ready() -> void:
 	if punnett_overlay:
 		punnett_overlay.close_button.pressed.connect(_on_punnett_overlay_closed)
 		inventory_overlay.rename_requested.connect(_on_inventory_rename_requested)
-		inventory_overlay.closed.connect(_on_inventory_closed)
 	rename_dialog.confirmed.connect(_on_rename_confirmed)
 	rename_line_edit.text_submitted.connect(func(_text): _on_rename_confirmed())
 	delete_dialog.confirmed.connect(_on_delete_confirmed)
@@ -192,7 +195,6 @@ func _on_gecko_selected(gecko: GeckoEntity) -> void:
 			return
 	print(LOG_PREFIX, " gecko clicked", gecko.gecko_name)
 	_context_gecko = gecko
-	_set_info_text(gecko.get_info_text(), true)
 	if not inventory_overlay.visible:
 		_clear_selection_visuals()
 		gecko.set_selected(true)
@@ -204,7 +206,6 @@ func _clear_selection_visuals() -> void:
 func _show_gecko_info(gecko: GeckoEntity) -> void:
 	if not gecko:
 		return
-	_set_info_text(gecko.get_info_text(), true)
 
 func _toggle_breed_selection(gecko: GeckoEntity) -> void:
 	if not gecko:
@@ -229,7 +230,6 @@ func _toggle_breed_selection(gecko: GeckoEntity) -> void:
 	if _selected.size() == 2:
 		if _selected[0].sex == _selected[1].sex:
 			print(LOG_PREFIX, " selection rejected - same sex")
-			_set_info_text("Pick one male and one female to breed.")
 			var removed: GeckoEntity = _selected.pop_back()
 			removed.set_selected(false)
 			return
@@ -252,18 +252,15 @@ func _on_rename_confirmed() -> void:
 		return
 	var new_name := rename_line_edit.text.strip_edges()
 	if new_name.is_empty():
-		_set_info_text("Name cannot be empty.", true)
 		rename_line_edit.grab_focus()
 		return
 	if _used_names.has(new_name) and new_name != _context_gecko.gecko_name:
-		_set_info_text("Name already used. Pick another.", true)
 		rename_line_edit.grab_focus()
 		rename_line_edit.select_all()
 		return
 	_used_names.erase(_context_gecko.gecko_name)
 	_used_names[new_name] = true
 	_context_gecko.set_gecko_name(new_name)
-	_set_info_text("Renamed to %s" % new_name, true)
 	rename_dialog.hide()
 	_refresh_inventory_overlay()
 
@@ -290,7 +287,6 @@ func _delete_gecko(gecko: GeckoEntity) -> void:
 	gecko.queue_free()
 	_pending_punnett_entries.clear()
 	dialogue_box.hide_punnett()
-	_set_info_text("Gecko deleted.", true)
 	_context_gecko = null
 	_refresh_inventory_overlay()
 
@@ -299,7 +295,6 @@ func _on_dialogue_line(line: Dictionary) -> void:
 
 func _on_dialogue_started(_topic: String) -> void:
 	dialogue_box.hide_punnett()
-	_set_info_text(DIALOGUE_INFO_TEXT)
 	pause_overlay.visible = false
 
 func _on_dialogue_ended(topic: String) -> void:
@@ -313,15 +308,11 @@ func _on_dialogue_ended(topic: String) -> void:
 				_dialogue_system.build_spouse_intro(_intro_gecko.gecko_name, _spouse_gecko.gecko_name),
 				"intro_spouse"
 			)
-		else:
-			_set_info_text()
 	elif topic == "intro_spouse":
 		_dialogue_system.start_dialogue(
 			_dialogue_system.build_breeding_prompt(_intro_gecko.gecko_name, _spouse_gecko.gecko_name),
 			"breeding_prompt"
 		)
-	else:
-		_set_info_text()
 
 func _advance_dialogue() -> void:
 	_dialogue_system.advance()
@@ -351,10 +342,7 @@ func _hatch_selected_gecko() -> void:
 		_selected.clear()
 		parent_a.set_selected(false)
 		parent_b.set_selected(false)
-		if _current_scenario == SCENARIO_TERRARIUM:
-			_set_info_text(DEFAULT_INFO_TEXT)
-		else:
-			_set_info_text("New hatchling is waiting in the terrarium. Switch scenes to meet them.")
+		
 		_pending_punnett_entries.clear()
 		_refresh_inventory_overlay()
 		return
@@ -362,7 +350,6 @@ func _hatch_selected_gecko() -> void:
 	for entry in _selected:
 		entry.set_selected(false)
 	_selected.clear()
-	_set_info_text(TERRARIUM_FULL_TEXT)
 	_pending_punnett_entries.clear()
 
 func _show_punnett_square(parent_a: GeckoEntity, parent_b: GeckoEntity) -> void:
@@ -373,8 +360,6 @@ func _show_punnett_square(parent_a: GeckoEntity, parent_b: GeckoEntity) -> void:
 		dialogue_box.hide_punnett()
 		return
 
-func _on_gecko_hovered(_gecko: GeckoEntity, info: String) -> void:
-	_set_info_text(info if not info.is_empty() else DEFAULT_INFO_TEXT, not info.is_empty())
 
 func _on_punnett_closed() -> void:
 	if _pending_punnett_entries.is_empty():
@@ -395,13 +380,11 @@ func _show_pending_punnett() -> void:
 		return
 	if punnett_overlay:
 		punnett_overlay.show_punnett(_pending_punnett_entries)
-		_set_info_text("Review the Punnett square, then close to hatch.", true)
 
 func _attach_gecko_signals(gecko: GeckoEntity) -> void:
 	if not gecko.gecko_selected.is_connected(_on_gecko_selected):
 		gecko.gecko_selected.connect(_on_gecko_selected)
-	if not gecko.gecko_hovered.is_connected(_on_gecko_hovered):
-		gecko.gecko_hovered.connect(_on_gecko_hovered)
+
 
 func _wire_existing_geckos() -> void:
 	for gecko in gecko_container.get_children():
@@ -413,10 +396,6 @@ func _wire_existing_geckos() -> void:
 				_intro_gecko = gecko
 			elif not _spouse_gecko and gecko.sex != _intro_gecko.sex:
 				_spouse_gecko = gecko
-
-func _set_info_text(text: String = DEFAULT_INFO_TEXT, show_box: bool = false) -> void:
-	info_label.text = text
-	info_label.visible = show_box and not text.is_empty()
 
 func _on_actions_button_pressed() -> void:
 	if not actions_menu:
@@ -451,16 +430,9 @@ func _show_inventory_overlay() -> void:
 	if not inventory_overlay:
 		return
 	inventory_overlay.show_inventory(_get_geckos(), _current_scenario)
-	_set_info_text("", false)
-
-func _on_inventory_closed() -> void:
-	_set_info_text()
 
 func _on_inventory_breed_requested(gecko_a: GeckoEntity, gecko_b: GeckoEntity) -> void:
 	if not gecko_a or not gecko_b:
-		return
-	if gecko_a.sex == gecko_b.sex:
-		_set_info_text("Pick one male and one female to breed.", true)
 		return
 	_selected.clear()
 	_selected.append_array([gecko_a, gecko_b])
@@ -502,7 +474,6 @@ func _switch_scenario(target: String) -> void:
 	terrarium_background.visible = target == SCENARIO_TERRARIUM
 	_update_change_scenario_button()
 	_apply_scene_visibility()
-	_set_info_text()
 	actions_menu.hide()
 
 func _update_change_scenario_button() -> void:

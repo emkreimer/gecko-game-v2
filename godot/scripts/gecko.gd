@@ -69,7 +69,8 @@ func set_gecko_name(new_name: String) -> void:
 
 func set_selected(selected: bool) -> void:
 	_selected = selected
-	composite.modulate = Color(1.3, 1.3, 0.95, 1) if selected else Color(1, 1, 1, 1)
+	if composite:
+		composite.modulate = Color(1.3, 1.3, 0.95, 1) if selected else Color(1, 1, 1, 1)
 
 func toggle_selection() -> void:
 	set_selected(not _selected)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cik30de5gaaah"]
+[gd_scene load_steps=12 format=3 uid="uid://cik30de5gaaah"]
 
 [ext_resource type="Script" uid="uid://dg0oyskx8up1s" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
 [ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
@@ -6,21 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://bkk87o2ooo6at" path="res://ui/overlays/fade_overlay.tscn" id="3_2p62b"]
 [ext_resource type="Texture2D" uid="uid://b0jjcasjtde2" path="res://assets/bg/terrarium.jpg" id="3_vus8m"]
 [ext_resource type="PackedScene" uid="uid://dvrxu6ntetf8m" path="res://ui/components/dialogue_box.tscn" id="4_0xw65"]
-[ext_resource type="Texture2D" uid="uid://dmelj2qgr8w7k" path="res://icon.svg" id="6_g6e5u"]
+[ext_resource type="Texture2D" uid="uid://d3qtrhssjtmx" path="res://icon.svg" id="6_g6e5u"]
 [ext_resource type="PackedScene" uid="uid://5q503rd02og7" path="res://ui/overlays/punnett_overlay.tscn" id="8_pnnet"]
 [ext_resource type="Texture2D" uid="uid://mtguh6qvqvwa" path="res://assets/ui/menu.png" id="9_menu"]
 [ext_resource type="PackedScene" uid="uid://p3lltlvkxnfw" path="res://ui/overlays/inventory_overlay.tscn" id="10_inv"]
-
-[sub_resource type="StyleBoxFlat" id="StyleInfoBox"]
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
-bg_color = Color(0, 0, 0, 0.85)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxTexture" id="StyleMenu"]
 texture = ExtResource("9_menu")
@@ -64,17 +53,6 @@ modulate = Color(1, 1, 1, 0.05)
 position = Vector2(960, 540)
 scale = Vector2(6, 6)
 texture = ExtResource("6_g6e5u")
-
-[node name="InfoLabel" type="RichTextLabel" parent="."]
-unique_name_in_owner = true
-offset_left = 30.0
-offset_top = 80.0
-offset_right = 305.0
-offset_bottom = 250.0
-mouse_filter = 1
-theme_override_colors/default_color = Color(1, 1, 1, 0.95)
-theme_override_styles/normal = SubResource("StyleInfoBox")
-scroll_active = false
 
 [node name="GeckoContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
