@@ -62,7 +62,7 @@ scroll_following = false
 text = ""
 mouse_filter = 2
 autowrap_mode = 1
-theme_override_colors/default_color = Color(0.96, 0.98, 1, 1)
+theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
 
 [node name="CloseButton" type="Button" parent="Panel/Margin/VBox"]
 unique_name_in_owner = true

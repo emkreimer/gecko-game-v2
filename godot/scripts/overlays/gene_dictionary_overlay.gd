@@ -73,22 +73,24 @@ func _build_trait_section(trait_key: String, trait_data: Dictionary) -> String:
 	for key in allele_keys:
 		var data: Dictionary = alleles.get(key, {})
 		var is_dominant: bool = data.get("dominant", false)
+		var dominance_rank: int = data.get("dominance_rank", 0)
 		var dominance_text := tr("dominant") if is_dominant else tr("recessive")
 		var dominance_color := "#ffd166" if is_dominant else "#9ee7a3"
 		var name: String = data.get("name", String(key))
 		var desc: String = data.get("description", "")
-		lines.append("- [code]%s[/code] [color=%s]%s[/color] | %s" % [key, dominance_color, dominance_text, name])
+		lines.append("- [code]%s[/code] [color=%s]%s (rank %d)[/color] | %s" % [key, dominance_color, dominance_text, dominance_rank, name])
 		if not desc.is_empty():
 			lines.append("  %s" % desc)
 	return "\n".join(lines)
 
 func _build_interaction_text() -> String:
 	var lines: PackedStringArray = []
-	lines.append("- Dominant + recessive: the dominant allele shows in the phenotype.")
-	lines.append("- Two dominants: both are strong; the first allele in the pair is used when they differ.")
-	lines.append("- Two recessives: the first allele in the pair is used unless they match.")
+	lines.append("- [b]Dominance Rank:[/b] The allele with the higher rank is expressed in the phenotype.")
+	lines.append("- Dominant alleles have positive ranks, recessive alleles have non-positive ranks.")
+	lines.append("- When two alleles have the same rank, they're co-dominant (first one shown).")
 	lines.append("- Identical alleles: that allele shows; the gecko is homozygous for the trait.")
-	lines.append("- Missing data: falls back to whichever allele has data.")
+	lines.append("- [i]Example:[/i] RO genotype → Red shows (rank 2 > rank 1)")
+	lines.append("- [i]Example:[/i] wb genotype → White shows (rank -2 > rank -3)")
 	lines.append("- Uppercase letters usually mark dominant alleles; lowercase are recessive.")
 	return "\n".join(lines)
 

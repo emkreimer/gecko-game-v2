@@ -20,7 +20,7 @@ const QUESTS := [
 	{
 		"id": "full_house",
 		"title": "Fill the terrarium",
-		"description": "Keep at least six geckos alive at once."
+		"description": "Keep at least eight geckos alive at once."
 	}
 ]
 
@@ -46,9 +46,9 @@ func _is_completed(quest_id: String, geckos: Array) -> bool:
 		"pale_pink_gecko":
 			return _count_genotype(geckos, "color", "p", "p") > 0
 		"tiny_slender_gecko":
-			return _count_genotype(geckos, "size", "s", "s") > 0 and _count_genotype(geckos, "tail", "t", "t") > 0
+			return _count_matching_tiny_slender(geckos) > 0
 		"full_house":
-			return geckos.size() >= 6
+			return geckos.size() >= 8
 		_:
 			return false
 
@@ -63,7 +63,7 @@ func _build_progress_text(quest_id: String, geckos: Array, completed: bool) -> S
 		"tiny_slender_gecko":
 			return "Tiny slender geckos owned: %d" % _count_matching_tiny_slender(geckos)
 		"full_house":
-			return "Current collection: %d / 6" % geckos.size()
+			return "Current collection: %d / 8" % geckos.size()
 		_:
 			return ""
 

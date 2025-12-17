@@ -5,46 +5,47 @@ const TRAITS := {
 	"color": {
 		"gene_name": "Body Color",
 		"alleles": {
-			"B": {"name": "Midnight Black", "dominant": true, "color": Color(0.1, 0.1, 0.1), "description": "Black hide."},
-			"R": {"name": "Ruby Red", "dominant": true, "color": Color(0.91, 0.32, 0.32), "description": "Ruby hide."},
-			"O": {"name": "Sunset Orange", "dominant": true, "color": Color(0.99, 0.55, 0.21), "description": "Orange hide."},
-			"y": {"name": "Lemon Yellow", "dominant": false, "color": Color(0.99, 0.91, 0.37), "description": "Lemon hide."},
-			"w": {"name": "White", "dominant": false, "color": Color(1, 1, 1), "description": "White hide."},
-			"p": {"name": "Pale Pink", "dominant": false, "color": Color(1.0, 0.75, 0.8), "description": "Pale pink hide."},
-			"b": {"name": "Brown", "dominant": false, "color": Color(0.55, 0.27, 0.07), "description": "Brown hide."}
+			"B": {"name": "Midnight Black", "dominant": true, "dominance_rank": 3, "color": Color(0.1, 0.1, 0.1), "description": "Black hide."},
+			"R": {"name": "Ruby Red", "dominant": true, "dominance_rank": 2, "color": Color(0.91, 0.32, 0.32), "description": "Ruby hide."},
+			"O": {"name": "Sunset Orange", "dominant": true, "dominance_rank": 1, "color": Color(0.99, 0.55, 0.21), "description": "Orange hide."},
+			"y": {"name": "Lemon Yellow", "dominant": false, "dominance_rank": 0, "color": Color(0.99, 0.91, 0.37), "description": "Lemon hide."},
+			"w": {"name": "White", "dominant": false, "dominance_rank": -1, "color": Color(1, 1, 1), "description": "White hide."},
+			"b": {"name": "Brown", "dominant": false, "dominance_rank": -2, "color": Color(0.55, 0.27, 0.07), "description": "Brown hide."},
+			"p": {"name": "Pale Pink", "dominant": false, "dominance_rank": -3, "color": Color(1.0, 0.75, 0.8), "description": "Pale pink hide."},
+
 		}
 	},
 	"eye_color": {
 		"gene_name": "Eye Color",
 		"alleles": {
-			"G": {"name": "Emerald", "dominant": true, "color": Color(0.3, 0.78, 0.43), "description": "Bright emerald eyes."},
-			"B": {"name": "Cobalt", "dominant": true, "color": Color(0.24, 0.48, 0.93), "description": "Cool cobalt eyes."},
-			"h": {"name": "Hazel", "dominant": false, "color": Color(0.59, 0.44, 0.18), "description": "Mellow hazel eyes."},
-			"y": {"name": "Yellow", "dominant": false, "color": Color(0.91, 0.65, 0.26), "description": "Warm yellow eyes."},
-			"w": {"name": "White", "dominant": false, "color": Color(1, 1, 1), "description": "Milky white, blind eyes."},
+			"G": {"name": "Emerald", "dominant": true, "dominance_rank": 2, "color": Color(0.3, 0.78, 0.43), "description": "Bright emerald eyes."},
+			"B": {"name": "Cobalt", "dominant": true, "dominance_rank": 1, "color": Color(0.24, 0.48, 0.93), "description": "Cool cobalt eyes."},
+			"h": {"name": "Hazel", "dominant": false, "dominance_rank": 0, "color": Color(0.59, 0.44, 0.18), "description": "Mellow hazel eyes."},
+			"y": {"name": "Yellow", "dominant": false, "dominance_rank": -1, "color": Color(0.91, 0.65, 0.26), "description": "Warm yellow eyes."},
+			"w": {"name": "White", "dominant": false, "dominance_rank": -2, "color": Color(1, 1, 1), "description": "Milky white, blind eyes."},
 
 		}
 	},
 	"pattern": {
 		"gene_name": "Pattern",
 		"alleles": {
-			"S": {"name": "Spotted", "dominant": true, "spots_visible": true, "description": "Spotted hide."},
-			"s": {"name": "Smooth", "dominant": false, "spots_visible": false, "description": "Uniform scales."}
+			"S": {"name": "Spotted", "dominant": true, "dominance_rank": 1, "spots_visible": true, "description": "Spotted hide."},
+			"s": {"name": "Smooth", "dominant": false, "dominance_rank": 0, "spots_visible": false, "description": "Uniform scales."}
 		}
 	},
 	"size": {
 		"gene_name": "Size",
 		"alleles": {
-			"L": {"name": "Large", "dominant": true, "scale": 1.15, "description": "Large."},
-			"m": {"name": "Medium", "dominant": false, "scale": 1.0, "description": "Balanced."},
-			"s": {"name": "Small", "dominant": false, "scale": 0.85, "description": "Small."}
+			"L": {"name": "Large", "dominant": true, "dominance_rank": 1, "scale": 1.15, "description": "Large."},
+			"m": {"name": "Medium", "dominant": false, "dominance_rank": 0, "scale": 1.0, "description": "Balanced."},
+			"s": {"name": "Small", "dominant": false, "dominance_rank": -1, "scale": 0.85, "description": "Small."}
 		}
 	},
 	"tail": {
 		"gene_name": "Tail",
 		"alleles": {
-			"T": {"name": "Thick", "dominant": true, "scale": 1.1, "description": "Thick tail."},
-			"t": {"name": "Slender", "dominant": false, "scale": 0.9, "description": "Whip-like tail."}
+			"T": {"name": "Thick", "dominant": true, "dominance_rank": 1, "scale": 1.1, "description": "Thick tail."},
+			"t": {"name": "Slender", "dominant": false, "dominance_rank": 0, "scale": 0.9, "description": "Whip-like tail."}
 		}
 	}
 }

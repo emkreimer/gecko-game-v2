@@ -171,35 +171,35 @@ alignment = 1
 
 [node name="ChangeScenarioButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Terrarium"
 
 [node name="OpenInventoryButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Open Inventory"
 
 [node name="QuestButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Quests"
 
 [node name="SearchGeckosButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Search for Geckos"
 
 [node name="GeneDictionaryButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Gene Dictionary"

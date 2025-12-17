@@ -33,17 +33,22 @@ func get_allele_data(code: String) -> Dictionary:
 func get_phenotype_data() -> Dictionary:
 	var allele_one := get_allele_data(allele1)
 	var allele_two := get_allele_data(allele2)
-	if allele_one.get("dominant", false) and not allele_two.get("dominant", false):
-		return allele_one
-	if allele_two.get("dominant", false) and not allele_one.get("dominant", false):
-		return allele_two
+	
 	if allele_one.is_empty():
 		return allele_two
 	if allele_two.is_empty():
 		return allele_one
+	
 	if allele_one == allele_two:
 		return allele_one
-	return allele_one
+	
+	var rank_one: int = allele_one.get("dominance_rank", 0)
+	var rank_two: int = allele_two.get("dominance_rank", 0)
+	
+	if rank_one > rank_two:
+		return allele_one
+	else:
+		return allele_two
 
 func get_phenotype_description() -> String:
 	var phenotype := get_phenotype_data()
