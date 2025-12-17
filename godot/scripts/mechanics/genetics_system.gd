@@ -21,7 +21,7 @@ const TRAITS := {
 			"B": {"name": "Cobalt", "dominant": true, "color": Color(0.24, 0.48, 0.93), "description": "Cool cobalt eyes."},
 			"h": {"name": "Hazel", "dominant": false, "color": Color(0.59, 0.44, 0.18), "description": "Mellow hazel eyes."},
 			"y": {"name": "Yellow", "dominant": false, "color": Color(0.91, 0.65, 0.26), "description": "Warm yellow eyes."},
-			"w": {"name": "Blind", "dominant": false, "color": Color(1, 1, 1), "description": "Milky white eyes."},
+			"w": {"name": "White", "dominant": false, "color": Color(1, 1, 1), "description": "Milky white, blind eyes."},
 
 		}
 	},

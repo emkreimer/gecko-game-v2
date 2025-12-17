@@ -16,6 +16,7 @@ const STARTER_NAMES := ["Asu", "Ai", "Aikawa", "Aitake", "Asuka", "Beelzebub",
 "Kai", "Kaiman", "Kasukabe", "Kento", "Kikurage", "Maki",
 "Matsumura", "Natsuki", "Nikaido", "Noi", "Risu", "Shin",
 "Shinta", "Shou", "Tanabe", "Tetsujo", "Turkey", "Yasaka"]
+const QuestOverlayScript := preload("res://scripts/overlays/quest_overlay.gd")
 
 @onready var gecko_container := %GeckoContainer
 @onready var dialogue_box: DialogueBox = %DialogueBox
@@ -27,7 +28,9 @@ const STARTER_NAMES := ["Asu", "Ai", "Aikawa", "Aitake", "Asuka", "Beelzebub",
 @onready var actions_menu: PopupPanel = %ActionsMenu
 @onready var change_scenario_button: Button = %ChangeScenarioButton
 @onready var open_inventory_button: Button = %OpenInventoryButton
+@onready var quest_button: Button = %QuestButton
 @onready var search_geckos_button: Button = %SearchGeckosButton
+@onready var gene_dictionary_button: Button = %GeneDictionaryButton
 @onready var inventory_overlay: InventoryOverlay = %InventoryOverlay
 @onready var dice_roll: Control = %DiceRoll
 @onready var rename_dialog: AcceptDialog = %RenameDialog
@@ -36,6 +39,8 @@ const STARTER_NAMES := ["Asu", "Ai", "Aikawa", "Aitake", "Asuka", "Beelzebub",
 @onready var terrarium_spawn_points := %TerrariumSpawnPoints
 @onready var wild_spawn_points := %WildSpawnPoints
 @onready var punnett_overlay: PunnettOverlay = %PunnettOverlay
+@onready var gene_dictionary_overlay: GeneDictionaryOverlay = %GeneDictionaryOverlay
+@onready var quest_overlay: QuestOverlayScript = %QuestOverlay
 
 var _dialogue_system := DialogueSystem.new()
 var _selected: Array = []
@@ -48,6 +53,8 @@ var _used_names := {}
 var _rng := RandomNumberGenerator.new()
 var _pending_punnett_entries: Array = []
 var _context_gecko: GeckoEntity
+var _quest_system: QuestSystem = QuestSystem.new()
+var _quest_statuses: Array = []
 
 func _ready() -> void:
 	randomize()
@@ -62,7 +69,9 @@ func _ready() -> void:
 	actions_button.pressed.connect(_on_actions_button_pressed)
 	change_scenario_button.pressed.connect(_on_change_scenario_pressed)
 	open_inventory_button.pressed.connect(_on_open_inventory_pressed)
+	quest_button.pressed.connect(_on_quest_button_pressed)
 	search_geckos_button.pressed.connect(_on_search_geckos_pressed)
+	gene_dictionary_button.pressed.connect(_on_gene_dictionary_pressed)
 	if dice_roll:
 		dice_roll.roll_completed.connect(_on_dice_roll_completed)
 	if inventory_overlay:
@@ -74,6 +83,8 @@ func _ready() -> void:
 	rename_dialog.confirmed.connect(_on_rename_confirmed)
 	rename_line_edit.text_submitted.connect(func(_text): _on_rename_confirmed())
 	delete_dialog.confirmed.connect(_on_delete_confirmed)
+	if quest_overlay:
+		quest_overlay.closed.connect(_on_quest_overlay_closed)
 	actions_menu.hide()
 	fade_overlay.visible = true
 	if SaveGame.has_save():
@@ -85,6 +96,7 @@ func _ready() -> void:
 		_spawn_intro_gecko()
 	_switch_scenario(_current_scenario)
 	_start_intro_dialogue()
+	_refresh_quests()
 
 func _spawn_intro_gecko() -> void:
 	if _intro_gecko:
@@ -119,6 +131,7 @@ func _spawn_gecko(genes: Dictionary, gecko_name: String, generation: int, parent
 	_attach_gecko_signals(gecko)
 	gecko_container.add_child(gecko)
 	_sync_gecko_visibility(gecko)
+	_refresh_quests()
 	print(LOG_PREFIX, " spawned gecko", gecko.gecko_name, "at", gecko.position)
 	return gecko
 
@@ -293,6 +306,7 @@ func _delete_gecko(gecko: GeckoEntity) -> void:
 	_pending_punnett_entries.clear()
 	dialogue_box.hide_punnett()
 	_context_gecko = null
+	_refresh_quests()
 	_refresh_inventory_overlay()
 
 func _on_dialogue_line(line: Dictionary) -> void:
@@ -401,6 +415,7 @@ func _wire_existing_geckos() -> void:
 				_intro_gecko = gecko
 			elif not _spouse_gecko and gecko.sex != _intro_gecko.sex:
 				_spouse_gecko = gecko
+	_refresh_quests()
 
 func _on_actions_button_pressed() -> void:
 	if not actions_menu:
@@ -429,6 +444,21 @@ func _on_search_geckos_pressed() -> void:
 		return
 	if dice_roll:
 		dice_roll.show_dice_roll()
+
+func _on_gene_dictionary_pressed() -> void:
+	actions_menu.hide()
+	if gene_dictionary_overlay:
+		gene_dictionary_overlay.show_dictionary()
+
+func _on_quest_button_pressed() -> void:
+	actions_menu.hide()
+	_refresh_quests()
+	if quest_overlay:
+		quest_overlay.show_quests(_quest_statuses)
+
+func _on_quest_overlay_closed() -> void:
+	if actions_button:
+		actions_button.grab_focus()
 
 func _on_dice_roll_completed(success: bool) -> void:
 	print(LOG_PREFIX, " dice roll completed, success:", success)
@@ -465,6 +495,13 @@ func _on_inventory_delete_requested(gecko: GeckoEntity) -> void:
 func _refresh_inventory_overlay() -> void:
 	if inventory_overlay:
 		inventory_overlay.refresh_inventory(_get_geckos(), _current_scenario)
+
+func _refresh_quests() -> void:
+	if not _quest_system:
+		return
+	_quest_statuses = _quest_system.evaluate(_get_geckos())
+	if quest_overlay and quest_overlay.visible:
+		quest_overlay.show_quests(_quest_statuses)
 
 func _get_geckos() -> Array:
 	var result: Array = []
@@ -516,6 +553,7 @@ func _spawn_wild_extra(count: int) -> void:
 		if gecko_container.get_child_count() >= MAX_GECKOS:
 			return
 		_spawn_gecko(GeneticsSystem.create_random_genes(), _pick_unique_name(), 1, [], _random_sex(), SCENARIO_WILD)
+	_refresh_quests()
 
 func _pick_unique_name() -> String:
 	var pool := STARTER_NAMES.duplicate()

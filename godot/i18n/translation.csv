@@ -1,6 +1,7 @@
 keys,en,de
 credits,emkreimer,Credits hier
 new_game,New Game,Neues Spiel
+gene_dictionary,Gene Dictionary,Genlexikon
 continue,Continue,Fortfahren
 settings,Game Settings,Einstellungen
 leave_game,Leave game,Spiel verlassen
@@ -15,3 +16,5 @@ settings_volume_sound,Sound Volume,Sound Lautstärke
 settings_language,Game Language,Spielsprache
 game_paused,Game paused,Spiel pausiert
 resume_game,Resume game,Weiterspielen
+dominant,Dominant,Dominant
+recessive,Recessive,Rezessiv
