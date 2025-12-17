@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cik30de5gaaah"]
+[gd_scene load_steps=13 format=3 uid="uid://cik30de5gaaah"]
 
 [ext_resource type="Script" uid="uid://dg0oyskx8up1s" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
 [ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
@@ -14,6 +14,10 @@
 
 [sub_resource type="StyleBoxTexture" id="StyleMenu"]
 texture = ExtResource("9_menu")
+expand_margin_left = 40.0
+expand_margin_top = 20.0
+expand_margin_right = 40.0
+expand_margin_bottom = 20.0
 
 [node name="IngameScene" type="Node2D"]
 script = ExtResource("1_xbft2")
@@ -124,50 +128,58 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 offset_left = -57.600002
 offset_top = -101.0
-offset_right = 55.600037
+offset_right = 57.600037
 offset_bottom = -3.0
 
 [node name="ActionsButton" type="Button" parent="UI"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(70, 70)
+custom_minimum_size = Vector2(40, 40)
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -90.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = 90.0
+offset_left = -49.0
+offset_top = 14.0
+offset_right = -9.0
+offset_bottom = 54.0
 grow_horizontal = 0
 text = "Menu"
 
 [node name="ActionsMenu" type="PopupPanel" parent="UI"]
 unique_name_in_owner = true
 oversampling_override = 1.0
-size = Vector2i(133, 100)
+size = Vector2i(320, 190)
 visible = true
 theme_override_styles/panel = SubResource("StyleMenu")
 
 [node name="ActionsVBox" type="VBoxContainer" parent="UI/ActionsMenu"]
-offset_right = 133.0
-offset_bottom = 100.0
-size_flags_horizontal = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_right = 160.0
+offset_bottom = 190.0
+size_flags_horizontal = 0
+alignment = 1
 
 [node name="ChangeScenarioButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 4
 text = "Terrarium"
 
 [node name="OpenInventoryButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 4
 text = "Open Inventory"
 
 [node name="SearchGeckosButton" type="Button" parent="UI/ActionsMenu/ActionsVBox"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 4
 text = "Search for Geckos"
 
 [node name="PauseOverlay" parent="UI" instance=ExtResource("2_1l4sl")]

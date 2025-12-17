@@ -408,19 +408,10 @@ func _on_actions_button_pressed() -> void:
 	if actions_menu.visible:
 		actions_menu.hide()
 		return
+	var desired_size: Vector2 = actions_menu.size
 	actions_menu.reset_size()
-	var button_global: Rect2 = actions_button.get_global_rect()
-	var popup_size: Vector2 = Vector2(240, 0)
-	if actions_menu.has_method("get_size"): # compat fallback
-		popup_size = actions_menu.get_size()
-	elif actions_menu.has_method("get_combined_minimum_size"):
-		popup_size = actions_menu.get_combined_minimum_size()
-	elif actions_menu.has_method("get_minimum_size"):
-		popup_size = actions_menu.get_minimum_size()
-	if popup_size == Vector2.ZERO:
-		popup_size = Vector2(240, 0)
-	actions_menu.position = Vector2(button_global.position.x + button_global.size.x - popup_size.x, button_global.end.y + 4)
-	actions_menu.popup()
+	actions_menu.size = desired_size
+	actions_menu.popup_centered(actions_menu.size)
 	actions_menu.grab_focus()
 
 func _on_change_scenario_pressed() -> void:
