@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cik30de5gaaah"]
+[gd_scene load_steps=14 format=3 uid="uid://cik30de5gaaah"]
 
 [ext_resource type="Script" uid="uid://dg0oyskx8up1s" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
 [ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://mtguh6qvqvwa" path="res://assets/ui/menu.png" id="9_menu"]
 [ext_resource type="PackedScene" uid="uid://p3lltlvkxnfw" path="res://ui/overlays/inventory_overlay.tscn" id="10_inv"]
 [ext_resource type="PackedScene" path="res://ui/components/dice_roll.tscn" id="11_dice"]
+[ext_resource type="AudioStream" uid="uid://br20c6wtkluul" path="res://assets/soundtrack/ambient.wav" id="12_music"]
 
 [sub_resource type="StyleBoxTexture" id="StyleMenu"]
 texture = ExtResource("9_menu")
@@ -58,6 +59,11 @@ modulate = Color(1, 1, 1, 0.05)
 position = Vector2(960, 540)
 scale = Vector2(6, 6)
 texture = ExtResource("6_g6e5u")
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+autoplay = true
+bus = &"Music"
+stream = ExtResource("12_music")
 
 [node name="GeckoContainer" type="Node2D" parent="."]
 unique_name_in_owner = true

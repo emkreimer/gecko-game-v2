@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dvrxu6ntetf8m"]
+[gd_scene load_steps=4 format=3 uid="uid://dvrxu6ntetf8m"]
 
 [ext_resource type="Script" uid="uid://bm4t36kyqcx2x" path="res://ui/components/dialogue_box.gd" id="1"]
+[ext_resource type="AudioStream" uid="uid://blqf3qadli45l" path="res://assets/sfx/typing.wav" id="2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleDialogue"]
 bg_color = Color(0.1, 0.1, 0.1, 0.9)
@@ -101,6 +102,14 @@ text = "▼ Press SPACE or CLICK"
 [node name="TypeTimer" type="Timer" parent="."]
 unique_name_in_owner = true
 wait_time = 0.03
+
+[node name="TypingAudioPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("2")
+bus = "Sound"
+volume_db = 4.0
+max_polyphony = 4
+pitch_scale = 1.0
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/PunnettWrapper/PunnettVBox/PunnettCloseButton" to="." method="_on_punnett_close_pressed"]
 [connection signal="timeout" from="TypeTimer" to="." method="_on_type_timer_timeout"]

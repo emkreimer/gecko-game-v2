@@ -14,6 +14,7 @@ signal punnett_closed
 @onready var punnett_container := $MarginContainer/VBoxContainer/PunnettWrapper
 @onready var punnett_label: RichTextLabel = $MarginContainer/VBoxContainer/PunnettWrapper/PunnettVBox/PunnettScroll/PunnettLabel
 @onready var punnett_close_button: Button = $MarginContainer/VBoxContainer/PunnettWrapper/PunnettVBox/PunnettCloseButton
+@onready var typing_player: AudioStreamPlayer = $TypingAudioPlayer
 
 var _full_text := ""
 var _visible_chars := 0
@@ -30,6 +31,7 @@ func display_line(line: Dictionary) -> void:
 	text_label.text = ""
 	continue_label.visible = false
 	_set_text_visibility(true)
+	_start_typing_audio()
 	var cps: float = max(characters_per_second, 1.0)
 	type_timer.wait_time = 1.0 / cps
 	type_timer.start()
@@ -41,6 +43,7 @@ func show_punnett(entries: Array) -> void:
 	visible = true
 	_typing = false
 	type_timer.stop()
+	_stop_typing_audio()
 	_set_text_visibility(false)
 	_punnett_active = true
 	punnett_container.visible = true
@@ -52,6 +55,7 @@ func hide_dialogue() -> void:
 	visible = false
 	_typing = false
 	type_timer.stop()
+	_stop_typing_audio()
 	continue_label.visible = false
 	_hide_punnett()
 
@@ -70,6 +74,7 @@ func request_advance() -> void:
 func _finish_typing() -> void:
 	_typing = false
 	type_timer.stop()
+	_stop_typing_audio()
 	text_label.text = _full_text
 	continue_label.visible = true
 
@@ -98,6 +103,7 @@ func _hide_punnett() -> void:
 	punnett_container.visible = false
 	punnett_label.text = ""
 	_set_text_visibility(true)
+	_stop_typing_audio()
 
 func _on_punnett_close_pressed() -> void:
 	_hide_punnett()
@@ -112,6 +118,20 @@ func _build_punnett_text(entries: Array) -> String:
 		if not table.is_empty():
 			blocks.append("[code]%s[/code]" % table)
 	return "\n\n".join(blocks)
+
+func _start_typing_audio() -> void:
+	if not typing_player:
+		return
+	if typing_player.stream is AudioStreamWAV:
+		var wav: AudioStreamWAV = typing_player.stream
+		if wav.loop_mode == AudioStreamWAV.LOOP_DISABLED:
+			wav.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	if not typing_player.playing:
+		typing_player.play()
+
+func _stop_typing_audio() -> void:
+	if typing_player:
+		typing_player.stop()
 
 func _build_punnett_table(entry: Dictionary) -> String:
 	var parent_a: PackedStringArray = entry.get("parent_a", PackedStringArray())
