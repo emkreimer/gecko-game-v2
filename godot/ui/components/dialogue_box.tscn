@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dvrxu6ntetf8m"]
 
-[ext_resource type="Script" uid="uid://bm4t36kyqcx2x" path="res://ui/components/dialogue_box.gd" id="1"]
+[ext_resource type="Script" uid="uid://bm4t36kyqcx2x" path="res://scripts/dialogue/dialogue_box.gd" id="1"]
 [ext_resource type="AudioStream" uid="uid://blqf3qadli45l" path="res://assets/sfx/typing.wav" id="2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleDialogue"]

@@ -1,15 +1,15 @@
 [gd_scene load_steps=14 format=3 uid="uid://cik30de5gaaah"]
 
 [ext_resource type="Script" uid="uid://dg0oyskx8up1s" path="res://scripts/ingame_controller.gd" id="1_xbft2"]
-[ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://ui/overlays/pause_overlay.tscn" id="2_1l4sl"]
+[ext_resource type="PackedScene" uid="uid://jyv4g54adkmo" path="res://scenes/overlays/pause_overlay.tscn" id="2_1l4sl"]
 [ext_resource type="Texture2D" uid="uid://dhlwh845mh6hc" path="res://assets/bg/wild_bg2 (1).jpg" id="2_vus8m"]
-[ext_resource type="PackedScene" uid="uid://bkk87o2ooo6at" path="res://ui/overlays/fade_overlay.tscn" id="3_2p62b"]
+[ext_resource type="PackedScene" uid="uid://bkk87o2ooo6at" path="res://scenes/overlays/fade_overlay.tscn" id="3_2p62b"]
 [ext_resource type="Texture2D" uid="uid://b0jjcasjtde2" path="res://assets/bg/terrarium.jpg" id="3_vus8m"]
 [ext_resource type="PackedScene" uid="uid://dvrxu6ntetf8m" path="res://ui/components/dialogue_box.tscn" id="4_0xw65"]
 [ext_resource type="Texture2D" uid="uid://d3qtrhssjtmx" path="res://icon.svg" id="6_g6e5u"]
-[ext_resource type="PackedScene" uid="uid://5q503rd02og7" path="res://ui/overlays/punnett_overlay.tscn" id="8_pnnet"]
+[ext_resource type="PackedScene" uid="uid://5q503rd02og7" path="res://scenes/overlays/punnett_overlay.tscn" id="8_pnnet"]
 [ext_resource type="Texture2D" uid="uid://mtguh6qvqvwa" path="res://assets/ui/menu.png" id="9_menu"]
-[ext_resource type="PackedScene" uid="uid://p3lltlvkxnfw" path="res://ui/overlays/inventory_overlay.tscn" id="10_inv"]
+[ext_resource type="PackedScene" uid="uid://p3lltlvkxnfw" path="res://scenes/overlays/inventory_overlay.tscn" id="10_inv"]
 [ext_resource type="PackedScene" path="res://ui/components/dice_roll.tscn" id="11_dice"]
 [ext_resource type="AudioStream" uid="uid://br20c6wtkluul" path="res://assets/soundtrack/ambient.wav" id="12_music"]
 
@@ -61,9 +61,9 @@ scale = Vector2(6, 6)
 texture = ExtResource("6_g6e5u")
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_music")
 autoplay = true
 bus = &"Music"
-stream = ExtResource("12_music")
 
 [node name="GeckoContainer" type="Node2D" parent="."]
 unique_name_in_owner = true
@@ -161,8 +161,7 @@ theme_override_styles/panel = SubResource("StyleMenu")
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -160.0
-offset_right = 160.0
+offset_right = 320.0
 offset_bottom = 190.0
 size_flags_horizontal = 0
 alignment = 1

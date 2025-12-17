@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://5q503rd02og7"]
 
-[ext_resource type="Script" path="res://ui/overlays/punnett_overlay.gd" id="1_rol32"]
+[ext_resource type="Script" uid="uid://cbg7yh08mkidm" path="res://scripts/overlays/punnett_overlay.gd" id="1_rol32"]
 
 [node name="PunnettOverlay" type="CanvasLayer"]
 script = ExtResource("1_rol32")

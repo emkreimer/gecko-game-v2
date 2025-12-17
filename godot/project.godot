@@ -16,7 +16,7 @@ config/features=PackedStringArray("4.5")
 
 [autoload]
 
-UserSettings="*res://settings/user_settings.gd"
+UserSettings="*res://scripts/user_settings.gd"
 
 [display]
 

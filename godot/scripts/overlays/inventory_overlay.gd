@@ -6,7 +6,7 @@ signal rename_requested(gecko)
 signal delete_requested(gecko)
 signal closed()
 
-const GeneticsSystem = preload("res://scripts/genetics_system.gd")
+const GeneticsSystem = preload("res://scripts/mechanics/genetics_system.gd")
 
 @export var gecko_scene: PackedScene = preload("res://scenes/gecko.tscn")
 

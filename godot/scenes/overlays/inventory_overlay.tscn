@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://p3lltlvkxnfw"]
 
-[ext_resource type="Script" uid="uid://djf6i53daqnu0" path="res://ui/overlays/inventory_overlay.gd" id="1_inventory"]
+[ext_resource type="Script" uid="uid://djf6i53daqnu0" path="res://scripts/overlays/inventory_overlay.gd" id="1_inventory"]
 [ext_resource type="Texture2D" uid="uid://bqb028ns2q2o2" path="res://assets/inventory/inventory.png" id="2_inventory"]
 
 [node name="InventoryOverlay" type="CanvasLayer"]
